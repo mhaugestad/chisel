@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "chunk_id": 0,
+    "tokens": [
+      "The",
+      "UNUN",
+      "met",
+      "with",
+      "Joe",
+      "BidenJoe",
+      "Biden",
+      "today."
+    ],
+    "labels": [
+      "O",
+      "O",
+      "O",
+      "O",
+      "B-PER",
+      "O",
+      "O",
+      "O"
+    ]
+  }
+]

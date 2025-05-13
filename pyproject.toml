@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chisel"
+version = "0.1.0"
+description = "Refining text, shaping labels. A modular preprocessing library for token classification tasks."
+readme = "README.md"
+authors = [{ name="Your Name", email="youremail@example.com" }]
+license = { file = "LICENSE" }
+dependencies = [
+  "pydantic>=2.0",
+  "transformers>=4.0",
+  "beautifulsoup4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "isort", "ruff"]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
