@@ -13,6 +13,7 @@ class EntitySpan(BaseModel):
     start: int
     end: int
     label: str
+    attributes: dict[str, str] = {}
 
     @model_validator(mode='after')
     def check_start_end(self) -> Self:

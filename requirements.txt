@@ -1,2 +1,6 @@
 pydantic
 bs4
+spacy
+transformers
+datasets
+tiktoken

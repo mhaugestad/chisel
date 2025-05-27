@@ -26,5 +26,5 @@ class Validator(Protocol):
         pass
 
 class Exporter(Protocol):
-    def export(self, data: List[Dict], path: str) -> None:
+    def export(self, data: List[Dict]) -> None:
         pass

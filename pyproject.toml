@@ -17,6 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "black", "isort", "ruff"]
+huggingface = ["datasets>=2.0"]
 
 [tool.black]
 line-length = 88

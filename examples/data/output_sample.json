@@ -4,22 +4,20 @@
     "chunk_id": 0,
     "tokens": [
       "The",
-      "UNUN",
+      "UN",
       "met",
       "with",
       "Joe",
-      "BidenJoe",
       "Biden",
       "today."
     ],
     "labels": [
       "O",
-      "O",
+      "B-ORG",
       "O",
       "O",
       "B-PER",
-      "O",
-      "O",
+      "I-PER",
       "O"
     ]
   }
