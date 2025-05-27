@@ -1,4 +1,4 @@
-from typing import Protocol, List, Dict
+from typing import Protocol, List, Dict, Literal
 from chisel.models.models import Token, EntitySpan
 
 class Loader(Protocol):
@@ -18,6 +18,9 @@ class Chunker(Protocol):
         pass
     
 class Labeler(Protocol):
+    subword_strategy: Literal["first", "all", "strict"] = "strict",
+    misalignment_policy: Literal["skip", "warn", "fail"] = "skip"
+    
     def label(self, tokens: List[Token], entities: List[EntitySpan]) -> List[str]:
         pass
 
