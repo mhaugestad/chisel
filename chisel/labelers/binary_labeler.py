@@ -6,6 +6,32 @@ import logging
 logger = logging.getLogger(__name__)
 
 class BinaryLabeler(Labeler):
+    """
+    A labeler that converts character-based entity spans into binary labels aligned with tokenized text.
+
+    Binary labels are produced with the following scheme:
+    - ENTITY: Indicates a token that is part of an entity
+    - O: Indicates a token that is outside any entity
+    
+    Parameters:
+    ----------
+    subword_strategy : {'first', 'all', 'strict'}, default='all'
+        Strategy for handling entities that span multiple subword tokens:
+        - 'first': Only label the first subword as B-, rest as I-, L-.
+        - 'all': Label all subwords using B-, I-, L- or U- as appropriate.
+        - 'strict': Only label tokens whose span exactly matches the entity. Others are skipped.
+
+    misalignment_policy : {'skip', 'warn', 'fail'}, default='skip'
+        Determines behavior when an entity cannot be aligned with any tokens:
+        - 'skip': Silently skip the unmatched entity.
+        - 'warn': Log a warning with entity details.
+        - 'fail': Raise a ValueError indicating the mismatch.
+
+    Returns:
+    -------
+    List[str]
+        A list of BILOU-formatted labels, one for each input token.
+    """
     def __init__(self, subword_strategy: str = "first", misalignment_policy: str = "skip"):
         self.subword_strategy = subword_strategy
         self.misalignment_policy = misalignment_policy

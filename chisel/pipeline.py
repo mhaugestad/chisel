@@ -19,7 +19,7 @@ class PreprocessingPipeline:
         self.validator = validator
         self.exporter = exporter
 
-    def run(self, input_path: str, output_path: str):
+    def run(self, input_path: str):
         documents = self.loader.load(input_path)
         processed = []
 
@@ -42,4 +42,4 @@ class PreprocessingPipeline:
                     "labels": labels
                 })
 
-        self.exporter.export(processed, output_path)
+        self.exporter.export(processed)

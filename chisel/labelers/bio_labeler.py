@@ -6,9 +6,36 @@ from chisel.models.models import Token, EntitySpan
 logger = logging.getLogger(__name__)
 
 class BIOLabeler(Labeler):
+    """
+    A labeler that converts character-based entity spans into BIO labels aligned with tokenized text.
+
+    BIO stands for:
+    - B: Beginning of an entity
+    - I: Inside an entity (not first or last)
+    - O: Outside any entity
+
+    Parameters:
+    ----------
+    subword_strategy : {'first', 'all', 'strict'}, default='all'
+        Strategy for handling entities that span multiple subword tokens:
+        - 'first': Only label the first subword as B-, rest as I-, L-.
+        - 'all': Label all subwords using B-, I-, L- or U- as appropriate.
+        - 'strict': Only label tokens whose span exactly matches the entity. Others are skipped.
+
+    misalignment_policy : {'skip', 'warn', 'fail'}, default='skip'
+        Determines behavior when an entity cannot be aligned with any tokens:
+        - 'skip': Silently skip the unmatched entity.
+        - 'warn': Log a warning with entity details.
+        - 'fail': Raise a ValueError indicating the mismatch.
+
+    Returns:
+    -------
+    List[str]
+        A list of BIO-formatted labels, one for each input token.
+    """
     def __init__(
         self,
-        subword_strategy: Literal["first", "all", "strict"] = "strict",
+        subword_strategy: Literal["first", "all", "strict"] = "all",
         misalignment_policy: Literal["skip", "warn", "fail"] = "skip"
     ):
         self.subword_strategy = subword_strategy
@@ -20,7 +47,7 @@ class BIOLabeler(Labeler):
         for entity in entities:
             matched_indices = [
                 idx for idx, token in enumerate(tokens)
-                if token.start >= entity.start and token.end <= entity.end
+                if not (token.end <= entity.start or token.start >= entity.end)
             ]
 
             if not matched_indices:
