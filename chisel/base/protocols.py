@@ -1,4 +1,4 @@
-from typing import Protocol, List, Dict, Literal
+from typing import Protocol, List, Dict, Literal, Tuple
 from chisel.models.models import Token, EntitySpan
 
 class Loader(Protocol):
@@ -13,9 +13,11 @@ class Tokenizer(Protocol):
     def tokenize(self, text: str) -> List[Token]:
         pass
     
-class Chunker(Protocol):
-    def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]:
-        pass
+class TokenChunker(Protocol):
+    def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]: ...
+
+class TextChunker(Protocol):
+    def chunk(self, text: str, entities: List[EntitySpan]) -> List[Tuple[str, List[EntitySpan]]]: ...
     
 class Labeler(Protocol):
     subword_strategy: Literal["first", "all", "strict"] = "strict",
@@ -25,7 +27,7 @@ class Labeler(Protocol):
         pass
 
 class Validator(Protocol):
-    def validate(self, tokens: List[str], labels: List[str]) -> bool:
+    def validate(self, text: str, tokens: List[Token], entities: List[EntitySpan], labels: List[str]) -> None:
         pass
 
 class Exporter(Protocol):
