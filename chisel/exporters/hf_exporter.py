@@ -12,6 +12,15 @@ class HuggingFaceExporter:
         hub_repo_id: str | None = None,
         private: bool = True
     ):
+        """
+        Initializes the HuggingFaceExporter with parameters for exporting datasets.
+        Args:
+            output_dir (str): Directory where the dataset will be saved.
+            dataset_name (str): Name of the dataset to be created.
+            push_to_hub (bool): Whether to push the dataset to Hugging Face Hub.
+            hub_repo_id (str | None): Repository ID on Hugging Face Hub if pushing to hub.
+            private (bool): Whether the dataset should be private when pushed to the hub.
+        """
         self.output_dir = output_dir
         self.dataset_name = dataset_name
         self.push_to_hub = push_to_hub
@@ -22,6 +31,11 @@ class HuggingFaceExporter:
             raise ValueError("hub_repo_id must be provided when push_to_hub=True")
 
     def export(self, data: List[Dict]) -> None:
+        """
+        Exports the provided data to a Hugging Face dataset format and saves it to disk.
+        Args:
+            data (List[Dict]): List of dictionaries containing the dataset entries.
+        """
         os.makedirs(self.output_dir, exist_ok=True)
 
         dataset = Dataset.from_list(data)
@@ -29,32 +43,3 @@ class HuggingFaceExporter:
 
         if self.push_to_hub:
             dataset.push_to_hub(repo_id=self.hub_repo_id, private=self.private)
-
-
-# ✅ Example Usage
-
-# exporter = HuggingFaceExporter(output_dir="datasets/")
-# exporter.export([
-#     {"id": "1", "tokens": ["Obama"], "labels": ["B-PER"]},
-#     {"id": "2", "tokens": ["UNICEF"], "labels": ["B-ORG"]}
-# ])
-
-
-# from datasets import load_from_disk
-# ds = load_from_disk("datasets/chisel_dataset")
-# print(ds[0])
-
-
-
-# exporter = HuggingFaceExporter(
-#     output_dir="datasets",
-#     dataset_name="chisel-dataset",
-#     push_to_hub=True,
-#     hub_repo_id="your-username/chisel-dataset",
-#     private=True
-# )
-
-# exporter.export([
-#     {"id": "1", "tokens": ["Obama"], "labels": ["B-PER"]},
-#     {"id": "2", "tokens": ["UNICEF"], "labels": ["B-ORG"]}
-# ])

@@ -8,6 +8,17 @@ import string
 
 class ConllParser(Parser):
     def __init__(self, sep: str = " ", joiner: str = " ", scheme: str = "BIO"):
+        """
+        Initialize the CoNLL parser.
+        Parameters:
+        ----------
+        sep : str
+            The separator used in the CoNLL format (default is space).
+        joiner : str
+            The string used to join tokens in the reconstructed text (default is space).
+        scheme : str
+            The annotation scheme used (default is "BIO"). It can be "BIO", "IOB", or "IOB2".
+        """
         self.sep = sep
         self.joiner = joiner
         self.scheme = scheme.upper()

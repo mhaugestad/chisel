@@ -5,6 +5,13 @@ from chisel.models.models import Token
 
 class SimpleWhitespaceTokenizer(Tokenizer):
     def tokenize(self, text: str) -> List[Token]:
+        """
+        Tokenizes the input text into a list of Token objects based on whitespace.
+        Args:
+            text (str): The input text to be tokenized.
+        Returns:
+            List[Token]: A list of Token objects, each containing the token text, start and end positions.
+        """
         tokens = []
         position = 0
         for idx, word in enumerate(text.split()):

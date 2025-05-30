@@ -12,6 +12,21 @@ class HTMLTagParser(Parser):
         excluded_tags: Optional[Set[str]] = None,
         allow_nested: bool = False,
     ):
+        """
+        Initializes the HTMLTagParser.
+        Parameters:
+        ----------
+        label_strategy : Literal["tag", "attribute"]
+            Strategy to determine the label for each entity span. If "tag", uses the tag name.
+            If "attribute", uses the specified attribute's value.
+        attribute_name : Optional[str]
+            The name of the attribute to use for labeling when label_strategy is "attribute".
+        excluded_tags : Optional[Set[str]]
+            Set of HTML tags to exclude from annotation. Default excludes common structural tags.
+        allow_nested : bool
+            If True, allows nested tags to be processed and annotated. If False, only the outermost
+            tags are annotated.
+        """
         self.label_strategy = label_strategy
         self.attribute_name = attribute_name
         self.excluded_tags = excluded_tags or {"html", "body", "div", "p", "span"}

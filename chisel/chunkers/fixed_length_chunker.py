@@ -3,10 +3,22 @@ from chisel.models.models import Token, EntitySpan
 
 class FixedLengthChunker:
     def __init__(self, max_tokens: int = 256, overlap: int = 0):
+        """Initializes the FixedLengthChunker with a maximum token length and overlap.
+        Args:
+            max_tokens (int): Maximum number of tokens per chunk.
+            overlap (int): Number of tokens to overlap between consecutive chunks.
+        """
         self.max_tokens = max_tokens
         self.overlap = overlap
 
     def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]:
+        """Chunks the provided tokens and entities into fixed-length segments.
+        Args:
+            tokens (List[Token]): List of tokens to be chunked.
+            entities (List[EntitySpan]): List of entity spans associated with the tokens.
+        Returns:
+            List[Dict]: A list of dictionaries, each containing a chunk of tokens and their associated entities.
+        """
         chunks = []
         stride = self.max_tokens - self.overlap
         i = 0

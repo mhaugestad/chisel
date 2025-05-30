@@ -44,6 +44,14 @@ class BILOLabeler(Labeler):
         self.misalignment_policy = misalignment_policy
 
     def label(self, tokens: List[Token], entities: List[EntitySpan]) -> List[str]:
+        """
+        Convert entity spans into BILOU labels aligned with tokenized text.
+        Args:
+            tokens (List[Token]): List of tokens with start and end offsets.
+            entities (List[EntitySpan]): List of entity spans to label.
+        Returns:
+            List[str]: A list of BILOU labels corresponding to each token.
+        """
         labels = ["O"] * len(tokens)
 
         for entity in entities:

@@ -3,10 +3,24 @@ from chisel.models.models import Token, EntitySpan
 
 class SlidingWindowChunker:
     def __init__(self, window_size: int = 512, stride: int = 256):
+        """Initializes the SlidingWindowChunker with a specified window size and stride.
+        Args:
+            window_size (int): Size of the sliding window in characters.
+            stride (int): Number of characters to move the window for each chunk.
+        """
+
         self.window_size = window_size
         self.stride = stride
 
     def chunk(self, text: str, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]:
+        """Chunks the provided text into overlapping segments using a sliding window approach.
+        Args:
+            text (str): The full text to be chunked.
+            tokens (List[Token]): List of tokens to be associated with the text.
+            entities (List[EntitySpan]): List of entity spans associated with the text.
+        Returns:
+            List[Dict]: A list of dictionaries, each containing a chunk of text, tokens, and entities.
+        """
         chunks = []
         text_length = len(text)
 
