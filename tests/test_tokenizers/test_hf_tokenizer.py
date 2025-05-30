@@ -1,4 +1,4 @@
-from chisel.tokenizers.hf_tokenizer import HFTokenizer
+from chisel.extraction.tokenizers.hf_tokenizer import HFTokenizer
 
 def test_hf_tokenizer_outputs_tokens_with_offsets():
     tokenizer = HFTokenizer()

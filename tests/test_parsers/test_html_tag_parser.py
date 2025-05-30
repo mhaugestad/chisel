@@ -1,5 +1,5 @@
-from chisel.parsers.html_tag_parser import HTMLTagParser
-from chisel.models.models import EntitySpan
+from chisel.extraction.parsers.html_tag_parser import HTMLTagParser
+from chisel.extraction.models.models import EntitySpan
 
 
 def test_parse_with_tag_label_strategy():

@@ -1,5 +1,5 @@
-from chisel.validators.bilou_alignement_validator import BILOUAlignmentValidator
-from chisel.models.models import Token, EntitySpan
+from chisel.extraction.validators.bilou_alignement_validator import BILOUAlignmentValidator
+from chisel.extraction.models.models import Token, EntitySpan
 
 
 def test_bilou_alignment_validator_success():

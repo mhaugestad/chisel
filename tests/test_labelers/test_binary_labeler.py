@@ -1,7 +1,7 @@
 import pytest
 from transformers import AutoTokenizer
-from chisel.labelers.binary_labeler import BinaryLabeler
-from chisel.models.models import Token, EntitySpan
+from chisel.extraction.labelers.binary_labeler import BinaryLabeler
+from chisel.extraction.models.models import Token, EntitySpan
 
 
 @pytest.fixture(scope="module")

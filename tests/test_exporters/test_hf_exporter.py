@@ -1,6 +1,6 @@
 import os
 from datasets import load_from_disk
-from chisel.exporters.hf_exporter import HuggingFaceExporter
+from chisel.extraction.exporters.hf_exporter import HuggingFaceExporter
 
 def test_hf_exporter_saves_dataset(tmp_path):
     data = [

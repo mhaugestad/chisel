@@ -1,6 +1,6 @@
 import pytest
-from chisel.chunkers.sliding_window_chunker import SlidingWindowChunker
-from chisel.models.models import Token, EntitySpan
+from chisel.extraction.chunkers.sliding_window_chunker import SlidingWindowChunker
+from chisel.extraction.models.models import Token, EntitySpan
 
 def test_sliding_window_chunker_basic():
     text = "John lives in New York City. Mary works in San Francisco."

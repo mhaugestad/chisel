@@ -1,8 +1,6 @@
-# tests/test_parsers/test_conll_parser.py
-
 import pytest
-from chisel.parsers.conll_parser import ConllParser
-from chisel.models.models import EntitySpan
+from chisel.extraction.parsers.conll_parser import ConllParser
+from chisel.extraction.models.models import EntitySpan
 
 def test_conll_parser_basic_bio():
     parser = ConllParser()

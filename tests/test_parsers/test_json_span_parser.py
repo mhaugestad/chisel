@@ -1,8 +1,8 @@
 # tests/test_parsers/test_json_span_parser.py
 
 import pytest
-from chisel.parsers.json_span_parser import JSONSpanParser
-from chisel.models.models import EntitySpan
+from chisel.extraction.parsers.json_span_parser import JSONSpanParser
+from chisel.extraction.models.models import EntitySpan
 
 def test_json_span_parser_basic():
     parser = JSONSpanParser()

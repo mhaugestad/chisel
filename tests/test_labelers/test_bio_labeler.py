@@ -1,6 +1,6 @@
 import pytest
-from chisel.labelers.bio_labeler import BIOLabeler
-from chisel.models.models import Token, EntitySpan
+from chisel.extraction.labelers.bio_labeler import BIOLabeler
+from chisel.extraction.models.models import Token, EntitySpan
 from transformers import AutoTokenizer
 
 @pytest.mark.parametrize("strategy,expected_labels", [

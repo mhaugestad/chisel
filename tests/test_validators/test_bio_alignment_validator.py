@@ -1,5 +1,5 @@
-from chisel.validators.bio_alignment_validator import BIOAlignmentValidator
-from chisel.models.models import Token, EntitySpan
+from chisel.extraction.validators.bio_alignment_validator import BIOAlignmentValidator
+from chisel.extraction.models.models import Token, EntitySpan
 
 
 def test_bio_alignment_validator_success():

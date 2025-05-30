@@ -1,6 +1,6 @@
 import pytest
-from chisel.chunkers.fixed_length_chunker import FixedLengthChunker
-from chisel.models.models import Token, EntitySpan
+from chisel.extraction.chunkers.fixed_length_chunker import FixedLengthChunker
+from chisel.extraction.models.models import Token, EntitySpan
 
 def test_fixed_length_chunker_basic():
     tokens = [

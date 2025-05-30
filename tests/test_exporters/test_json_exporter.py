@@ -1,6 +1,6 @@
 import json
 import pytest
-from chisel.exporters.json_exporter import JSONExporter
+from chisel.extraction.exporters.json_exporter import JSONExporter
 
 def test_json_exporter(tmp_path):
     data = [
