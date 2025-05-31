@@ -17,11 +17,6 @@ class SimpleWhitespaceTokenizer(Tokenizer):
         for idx, word in enumerate(text.split()):
             start = text.index(word, position)
             end = start + len(word)
-            tokens.append(Token(
-                id=idx,
-                text = word,
-                start = start,
-                end = end
-            ))
+            tokens.append(Token(id=idx, text=word, start=start, end=end))
             position = end
         return tokens

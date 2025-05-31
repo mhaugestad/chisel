@@ -1,7 +1,7 @@
 from datasets import Dataset
 from typing import List, Dict
-from chisel.extraction.base.protocols import Exporter
 import os
+
 
 class HuggingFaceExporter:
     def __init__(
@@ -10,7 +10,7 @@ class HuggingFaceExporter:
         dataset_name: str = "chisel_dataset",
         push_to_hub: bool = False,
         hub_repo_id: str | None = None,
-        private: bool = True
+        private: bool = True,
     ):
         """
         Initializes the HuggingFaceExporter with parameters for exporting datasets.

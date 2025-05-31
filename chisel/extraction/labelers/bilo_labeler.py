@@ -5,6 +5,7 @@ from chisel.extraction.models.models import Token, EntitySpan
 
 logger = logging.getLogger(__name__)
 
+
 class BILOLabeler(Labeler):
     """
     A labeler that converts character-based entity spans into BILOU labels aligned with tokenized text.
@@ -35,10 +36,11 @@ class BILOLabeler(Labeler):
     List[str]
         A list of BILOU-formatted labels, one for each input token.
     """
+
     def __init__(
         self,
         subword_strategy: Literal["first", "all", "strict"] = "all",
-        misalignment_policy: Literal["skip", "warn", "fail"] = "skip"
+        misalignment_policy: Literal["skip", "warn", "fail"] = "skip",
     ):
         self.subword_strategy = subword_strategy
         self.misalignment_policy = misalignment_policy
@@ -56,7 +58,8 @@ class BILOLabeler(Labeler):
 
         for entity in entities:
             matched_indices = [
-                idx for idx, token in enumerate(tokens)
+                idx
+                for idx, token in enumerate(tokens)
                 if not (token.end <= entity.start or token.start >= entity.end)
             ]
 
@@ -74,7 +77,9 @@ class BILOLabeler(Labeler):
                 for idx in matched_indices:
                     token = tokens[idx]
                     if token.start == entity.start and token.end == entity.end:
-                        labels[idx] = f"U-{entity.label}"  # Treat strict exact match as Unit
+                        labels[idx] = (
+                            f"U-{entity.label}"  # Treat strict exact match as Unit
+                        )
                 continue
 
             if self.subword_strategy == "first":

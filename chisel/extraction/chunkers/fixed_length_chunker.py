@@ -1,6 +1,7 @@
 from typing import List, Dict
 from chisel.extraction.models.models import Token, EntitySpan
 
+
 class FixedLengthChunker:
     def __init__(self, max_tokens: int = 256, overlap: int = 0):
         """Initializes the FixedLengthChunker with a maximum token length and overlap.
@@ -24,7 +25,7 @@ class FixedLengthChunker:
         i = 0
 
         while i < len(tokens):
-            token_chunk = tokens[i:i + self.max_tokens]
+            token_chunk = tokens[i : i + self.max_tokens]
             token_start = token_chunk[0].start
             token_end = token_chunk[-1].end
 
@@ -35,9 +36,10 @@ class FixedLengthChunker:
                     start=e.start - token_start,
                     end=e.end - token_start,
                     label=e.label,
-                    attributes=e.attributes
+                    attributes=e.attributes,
                 )
-                for e in entities if token_start <= e.start and e.end <= token_end
+                for e in entities
+                if token_start <= e.start and e.end <= token_end
             ]
 
             # Offset tokens to be chunk-relative
@@ -46,16 +48,14 @@ class FixedLengthChunker:
                     id=t.id,
                     text=t.text,
                     start=t.start - token_start,
-                    end=t.end - token_start
+                    end=t.end - token_start,
                 )
                 for t in token_chunk
             ]
 
-            chunks.append({
-                "tokens": chunk_tokens,
-                "entities": chunk_entities,
-                "offset": i
-            })
+            chunks.append(
+                {"tokens": chunk_tokens, "entities": chunk_entities, "offset": i}
+            )
 
             i += stride
 

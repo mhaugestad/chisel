@@ -16,9 +16,11 @@ def tokenize(tokenizer, text):
             id=token_id,
             text=tokenizer.convert_ids_to_tokens([token_id])[0],
             start=start,
-            end=end
+            end=end,
         )
-        for token_id, (start, end) in zip(encoding["input_ids"], encoding["offset_mapping"])
+        for token_id, (start, end) in zip(
+            encoding["input_ids"], encoding["offset_mapping"]
+        )
     ]
 
 

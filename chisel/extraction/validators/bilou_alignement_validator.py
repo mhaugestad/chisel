@@ -6,7 +6,13 @@ class BILOUAlignmentValidator:
     def __init__(self, ignore_whitespace: bool = True):
         self.ignore_whitespace = ignore_whitespace
 
-    def validate(self, text: str, tokens: List[Token], entities: List[EntitySpan], labels: List[str]) -> List[str]:
+    def validate(
+        self,
+        text: str,
+        tokens: List[Token],
+        entities: List[EntitySpan],
+        labels: List[str],
+    ) -> List[str]:
         """
         Validates that BILOU-labeled spans correctly reconstruct the EntitySpan text.
         Returns a list of error messages if mismatches are found.
@@ -30,13 +36,17 @@ class BILOUAlignmentValidator:
                     end = tokens[i].end
                     i += 1
                 else:
-                    errors.append(f"Missing L- tag to close entity starting at token {i - len(pieces)}")
+                    errors.append(
+                        f"Missing L- tag to close entity starting at token {i - len(pieces)}"
+                    )
                     continue
 
                 stitched = "".join(pieces)
                 match = self._find_span(start, end, label_type, entities)
                 if not match:
-                    errors.append(f"No span found for BIL entity '{label_type}' ({start}-{end})")
+                    errors.append(
+                        f"No span found for BIL entity '{label_type}' ({start}-{end})"
+                    )
                 else:
                     if self.ignore_whitespace:
                         stitched = stitched.replace(" ", "")
@@ -44,7 +54,9 @@ class BILOUAlignmentValidator:
                     else:
                         expected = match.text
                     if stitched != expected:
-                        errors.append(f"Mismatch in BIL entity '{label_type}': got '{stitched}' vs '{match.text}'")
+                        errors.append(
+                            f"Mismatch in BIL entity '{label_type}': got '{stitched}' vs '{match.text}'"
+                        )
 
             elif label.startswith("U-"):
                 label_type = label[2:]
@@ -53,11 +65,16 @@ class BILOUAlignmentValidator:
                 match = self._find_span(start, end, label_type, entities)
 
                 if not match:
-                    errors.append(f"No span found for U entity '{label_type}' ({start}-{end})")
+                    errors.append(
+                        f"No span found for U entity '{label_type}' ({start}-{end})"
+                    )
                 elif (not self.ignore_whitespace and tokens[i].text != match.text) or (
-                    self.ignore_whitespace and tokens[i].text.replace(" ", "") != match.text.replace(" ", "")
+                    self.ignore_whitespace
+                    and tokens[i].text.replace(" ", "") != match.text.replace(" ", "")
                 ):
-                    errors.append(f"Mismatch in U entity '{label_type}': got '{tokens[i].text}' vs '{match.text}'")
+                    errors.append(
+                        f"Mismatch in U entity '{label_type}': got '{tokens[i].text}' vs '{match.text}'"
+                    )
                 i += 1
 
             else:
@@ -65,7 +82,9 @@ class BILOUAlignmentValidator:
 
         return errors
 
-    def _find_span(self, start: int, end: int, label: str, spans: List[EntitySpan]) -> EntitySpan | None:
+    def _find_span(
+        self, start: int, end: int, label: str, spans: List[EntitySpan]
+    ) -> EntitySpan | None:
         for span in spans:
             if span.start == start and span.end == end and span.label == label:
                 return span

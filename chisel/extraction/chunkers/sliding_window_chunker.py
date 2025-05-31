@@ -1,6 +1,7 @@
 from typing import List, Dict
 from chisel.extraction.models.models import Token, EntitySpan
 
+
 class SlidingWindowChunker:
     def __init__(self, window_size: int = 512, stride: int = 256):
         """Initializes the SlidingWindowChunker with a specified window size and stride.
@@ -12,7 +13,9 @@ class SlidingWindowChunker:
         self.window_size = window_size
         self.stride = stride
 
-    def chunk(self, text: str, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]:
+    def chunk(
+        self, text: str, tokens: List[Token], entities: List[EntitySpan]
+    ) -> List[Dict]:
         """Chunks the provided text into overlapping segments using a sliding window approach.
         Args:
             text (str): The full text to be chunked.
@@ -35,7 +38,7 @@ class SlidingWindowChunker:
                     id=token.id,
                     text=token.text,
                     start=token.start - window_start,
-                    end=token.end - window_start
+                    end=token.end - window_start,
                 )
                 for token in tokens
                 if token.start >= window_start and token.end <= window_end
@@ -54,11 +57,13 @@ class SlidingWindowChunker:
                 if ent.start >= window_start and ent.end <= window_end
             ]
 
-            chunks.append({
-                "text": chunk_text,
-                "tokens": chunk_tokens,
-                "entities": chunk_entities,
-                "offset": window_start
-            })
+            chunks.append(
+                {
+                    "text": chunk_text,
+                    "tokens": chunk_tokens,
+                    "entities": chunk_entities,
+                    "offset": window_start,
+                }
+            )
 
         return chunks

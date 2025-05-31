@@ -16,10 +16,13 @@ def make_tokens(tokenizer, text):
             id=input_id,
             text=tokenizer.convert_ids_to_tokens([input_id])[0],
             start=start,
-            end=end
+            end=end,
         )
-        for input_id, (start, end) in zip(encoding["input_ids"], encoding["offset_mapping"])
+        for input_id, (start, end) in zip(
+            encoding["input_ids"], encoding["offset_mapping"]
+        )
     ]
+
 
 def test_bilo_labeler_single_token_entity(tokenizer):
     text = "Google announced a new feature."
@@ -31,9 +34,11 @@ def test_bilo_labeler_single_token_entity(tokenizer):
             id=input_id,
             text=tokenizer.convert_ids_to_tokens([input_id])[0],
             start=start,
-            end=end
+            end=end,
         )
-        for input_id, (start, end) in zip(encoding["input_ids"], encoding["offset_mapping"])
+        for input_id, (start, end) in zip(
+            encoding["input_ids"], encoding["offset_mapping"]
+        )
     ]
 
     labeler = BILOLabeler(subword_strategy="first")
@@ -53,9 +58,11 @@ def test_bilo_labeler_multi_token_entity(tokenizer):
             id=input_id,
             text=tokenizer.convert_ids_to_tokens([input_id])[0],
             start=start,
-            end=end
+            end=end,
         )
-        for input_id, (start, end) in zip(encoding["input_ids"], encoding["offset_mapping"])
+        for input_id, (start, end) in zip(
+            encoding["input_ids"], encoding["offset_mapping"]
+        )
     ]
 
     labeler = BILOLabeler(subword_strategy="all")
@@ -80,6 +87,7 @@ def test_misaligned_entity_fail(tokenizer):
     with pytest.raises(ValueError, match="No tokens align with entity span"):
         labeler.label(tokens, [entity])
 
+
 def test_misaligned_entity_warn(tokenizer, caplog):
     text = "Apple released a product."
     tokens = make_tokens(tokenizer, text)
@@ -93,6 +101,7 @@ def test_misaligned_entity_warn(tokenizer, caplog):
     assert "No tokens align with entity span" in caplog.text
     assert all(label == "O" for label in labels)
 
+
 def test_misaligned_entity_skip(tokenizer):
     text = "Apple released a product."
     tokens = make_tokens(tokenizer, text)
@@ -105,12 +114,15 @@ def test_misaligned_entity_skip(tokenizer):
     assert all(label == "O" for label in labels)
 
 
-@pytest.mark.parametrize("model_name", [
-    "bert-base-uncased",        # WordPiece
-    "roberta-base",             # BPE
-    "albert-base-v2",           # SentencePiece
-    "xlm-roberta-base",         # SPM+BPE
-])
+@pytest.mark.parametrize(
+    "model_name",
+    [
+        "bert-base-uncased",  # WordPiece
+        "roberta-base",  # BPE
+        "albert-base-v2",  # SentencePiece
+        "xlm-roberta-base",  # SPM+BPE
+    ],
+)
 def test_bilo_labeler_multitoken_entity_on_various_tokenizers(model_name):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     text = "Barack Obama visited Berlin."
@@ -122,9 +134,11 @@ def test_bilo_labeler_multitoken_entity_on_various_tokenizers(model_name):
             id=token_id,
             text=tokenizer.convert_ids_to_tokens([token_id])[0],
             start=start,
-            end=end
+            end=end,
         )
-        for token_id, (start, end) in zip(encoding["input_ids"], encoding["offset_mapping"])
+        for token_id, (start, end) in zip(
+            encoding["input_ids"], encoding["offset_mapping"]
+        )
     ]
 
     labeler = BILOLabeler(subword_strategy="all")

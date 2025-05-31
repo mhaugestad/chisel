@@ -2,6 +2,7 @@ import pytest
 from chisel.extraction.chunkers.fixed_length_chunker import FixedLengthChunker
 from chisel.extraction.models.models import Token, EntitySpan
 
+
 def test_fixed_length_chunker_basic():
     tokens = [
         Token(id=0, text="John", start=0, end=4),
@@ -29,7 +30,9 @@ def test_fixed_length_chunker_basic():
 
     # Chunk 1
     assert [t.text for t in chunks[1]["tokens"]] == ["New", "York", "City", "."]
-    assert [(e.text, e.label) for e in chunks[1]["entities"]] == [("New York City", "LOC")]
+    assert [(e.text, e.label) for e in chunks[1]["entities"]] == [
+        ("New York City", "LOC")
+    ]
 
     # Chunk 2
     assert [t.text for t in chunks[2]["tokens"]] == ["."]

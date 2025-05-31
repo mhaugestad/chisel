@@ -72,7 +72,11 @@ class ConllParser(Parser):
                     char_offset += len(self.joiner) + len(tokens[i])
                     i += 1
                 ent_end = char_offset
-                spans.append(EntitySpan(text=ent_text, start=ent_start, end=ent_end, label=ent_label))
+                spans.append(
+                    EntitySpan(
+                        text=ent_text, start=ent_start, end=ent_end, label=ent_label
+                    )
+                )
             else:
                 text += token
                 char_offset += len(token)

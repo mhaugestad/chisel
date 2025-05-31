@@ -1,5 +1,6 @@
 from chisel.extraction.labelers.simple_label_encoder import SimpleLabelEncoder
 
+
 def test_simple_label_encoder():
     labels_1 = ["B-PER", "I-PER", "O", "B-ORG"]
     labels_2 = ["O", "B-LOC", "I-LOC", "O"]

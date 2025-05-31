@@ -64,13 +64,15 @@ class HTMLTagParser(Parser):
                     attributes = {k: v for k, v in node.attrs.items()}
                     start = len(clean_text)
                     end = start + len(inner_text)
-                    entities.append(EntitySpan(
-                        text=inner_text,
-                        start=start,
-                        end=end,
-                        label=label,
-                        attributes=attributes,
-                    ))
+                    entities.append(
+                        EntitySpan(
+                            text=inner_text,
+                            start=start,
+                            end=end,
+                            label=label,
+                            attributes=attributes,
+                        )
+                    )
                     return inner_text
                 else:
                     # Process children but skip annotating this tag

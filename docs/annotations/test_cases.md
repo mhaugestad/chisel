@@ -81,4 +81,3 @@ This is <b>bold</b>, and <PER>Jane</PER> is here.
 <SPEAKER>Dr. Smith</SPEAKER>: <QUOTE>"This finding is significant."</QUOTE>
 ```
 → Useful for quote extraction, news, and dialogue attribution.
-

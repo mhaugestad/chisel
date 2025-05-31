@@ -5,3 +5,6 @@ __pycache__
 *.pyd
 *.pdb
 *.pyc
+.mypy_cache
+.pytest_cache
+.ruff_cache

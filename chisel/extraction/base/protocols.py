@@ -1,6 +1,7 @@
 from typing import Protocol, List, Dict, Literal, Tuple
 from chisel.extraction.models.models import Token, EntitySpan
 
+
 class Loader(Protocol):
     """
     A protocol for loading raw annotated documents from disk or remote sources.
@@ -8,8 +9,10 @@ class Loader(Protocol):
     Implementations should return a list of dictionaries representing individual samples,
     typically with fields like "text", "html", or "annotations".
     """
+
     def load(self, path: str) -> List[Dict]:
         pass
+
 
 class Parser(Protocol):
     """
@@ -17,8 +20,10 @@ class Parser(Protocol):
 
     Example use case: stripping HTML tags and extracting entities into start-end labeled spans.
     """
+
     def parse(self, doc: str) -> tuple[str, List[EntitySpan]]:
         pass
+
 
 class Tokenizer(Protocol):
     """
@@ -26,16 +31,20 @@ class Tokenizer(Protocol):
 
     Tokens must include start and end character offsets to support entity alignment.
     """
+
     def tokenize(self, text: str) -> List[Token]:
         pass
-    
+
+
 class TokenChunker(Protocol):
     """
     A protocol for chunking sequences of tokens and entity spans into smaller, self-contained units.
 
     Useful for handling model input length constraints (e.g., max 512 tokens in BERT).
     """
+
     def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]: ...
+
 
 class TextChunker(Protocol):
     """
@@ -44,8 +53,12 @@ class TextChunker(Protocol):
     This is typically used in workflows where chunking should happen before tokenization
     (e.g., character-based sliding windows).
     """
-    def chunk(self, text: str, entities: List[EntitySpan]) -> List[Tuple[str, List[EntitySpan]]]: ...
-    
+
+    def chunk(
+        self, text: str, entities: List[EntitySpan]
+    ) -> List[Tuple[str, List[EntitySpan]]]: ...
+
+
 class Labeler(Protocol):
     """
     A protocol for converting entity spans into token-level labels using a labeling scheme like BIO or BILOU.
@@ -64,11 +77,12 @@ class Labeler(Protocol):
             - "fail": raise an error
     """
 
-    subword_strategy: Literal["first", "all", "strict"] = "strict",
+    subword_strategy: Literal["first", "all", "strict"] = "strict"
     misalignment_policy: Literal["skip", "warn", "fail"] = "skip"
-    
+
     def label(self, tokens: List[Token], entities: List[EntitySpan]) -> List[str]:
         pass
+
 
 class Validator(Protocol):
     """
@@ -76,8 +90,15 @@ class Validator(Protocol):
 
     Implementations may check alignment between spans and text, label validity, or token-label consistency.
     """
-    def validate(self, text: str, tokens: List[Token], entities: List[EntitySpan], labels: List[str]) -> None:
-        ...
+
+    def validate(
+        self,
+        text: str,
+        tokens: List[Token],
+        entities: List[EntitySpan],
+        labels: List[str],
+    ) -> None: ...
+
 
 class Exporter(Protocol):
     """
@@ -85,8 +106,10 @@ class Exporter(Protocol):
 
     Examples include exporting to JSON, Hugging Face datasets, or cloud storage.
     """
+
     def export(self, data: List[Dict]) -> None:
         pass
+
 
 class LabelEncoder(Protocol):
     def fit(self, label_lists: List[List[str]]) -> None:

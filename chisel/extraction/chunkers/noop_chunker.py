@@ -1,9 +1,9 @@
 from typing import List, Dict
-from chisel.extraction.base.protocols import Chunker
+from chisel.extraction.base.protocols import TokenChunker
 from chisel.extraction.models.models import Token, EntitySpan
 
 
-class NoOpChunker(Chunker):
+class NoOpChunker(TokenChunker):
     def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]:
         """
         No-op chunker that returns the input tokens and entities as a single chunk.
@@ -13,10 +13,4 @@ class NoOpChunker(Chunker):
         Returns:
             List[Dict]: A list containing a single dictionary with all tokens and entities.
         """
-        return [
-            {
-                "tokens": tokens,
-                "entities": entities,
-                "chunk_id": 0
-             }
-        ]
+        return [{"tokens": tokens, "entities": entities, "chunk_id": 0}]

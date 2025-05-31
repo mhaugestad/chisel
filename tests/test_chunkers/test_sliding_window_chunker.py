@@ -2,6 +2,7 @@ import pytest
 from chisel.extraction.chunkers.sliding_window_chunker import SlidingWindowChunker
 from chisel.extraction.models.models import Token, EntitySpan
 
+
 def test_sliding_window_chunker_basic():
     text = "John lives in New York City. Mary works in San Francisco."
 
@@ -36,15 +37,35 @@ def test_sliding_window_chunker_basic():
 
     # Chunk 0
     assert chunks[0]["text"] == text[0:30]
-    assert [t.text for t in chunks[0]["tokens"]] == ["John", "lives", "in", "New", "York", "City", "."]
-    assert [(e.text, e.label) for e in chunks[0]["entities"]] == [("John", "PER"), ("New York City", "LOC")]
+    assert [t.text for t in chunks[0]["tokens"]] == [
+        "John",
+        "lives",
+        "in",
+        "New",
+        "York",
+        "City",
+        ".",
+    ]
+    assert [(e.text, e.label) for e in chunks[0]["entities"]] == [
+        ("John", "PER"),
+        ("New York City", "LOC"),
+    ]
 
     # Chunk 1
     assert chunks[1]["text"] == text[20:50]
-    assert [t.text for t in chunks[1]["tokens"]] == ["City", ".", "Mary", "works", "in", "San"]
+    assert [t.text for t in chunks[1]["tokens"]] == [
+        "City",
+        ".",
+        "Mary",
+        "works",
+        "in",
+        "San",
+    ]
     assert [(e.text, e.label) for e in chunks[1]["entities"]] == [("Mary", "PER")]
 
     # Chunk 2
-    assert chunks[2]["text"] == text[40:len(text)]
+    assert chunks[2]["text"] == text[40 : len(text)]
     assert [t.text for t in chunks[2]["tokens"]] == ["in", "San", "Francisco", "."]
-    assert [(e.text, e.label) for e in chunks[2]["entities"]] == [("San Francisco", "LOC")]
+    assert [(e.text, e.label) for e in chunks[2]["entities"]] == [
+        ("San Francisco", "LOC")
+    ]

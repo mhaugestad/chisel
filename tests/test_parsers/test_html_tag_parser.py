@@ -49,7 +49,9 @@ def test_parse_nested_tags_allow_nested():
     assert text == "The CEO spoke."
     assert len(spans) == 2
 
-    labels = sorted([(s.label, s.start, s.end, s.text) for s in spans], key=lambda x: x[0])
+    labels = sorted(
+        [(s.label, s.start, s.end, s.text) for s in spans], key=lambda x: x[0]
+    )
     assert labels[0] == ("PERSON", 4, 7, "CEO")
     assert labels[1] == ("ROLE", 4, 7, "CEO")
 

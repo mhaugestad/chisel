@@ -1,5 +1,6 @@
 from typing import List
-from chisel.extraction.models.models import Token, EntitySpan
+from chisel.extraction.models.models import EntitySpan
+
 
 class SpanInTextValidator:
     def validate(self, text: str, tokens, entities: List[EntitySpan], labels=None):

@@ -2,10 +2,11 @@ import os
 from datasets import load_from_disk
 from chisel.extraction.exporters.hf_exporter import HuggingFaceExporter
 
+
 def test_hf_exporter_saves_dataset(tmp_path):
     data = [
         {"id": "1", "tokens": ["Obama"], "labels": ["B-PER"]},
-        {"id": "2", "tokens": ["UNICEF"], "labels": ["B-ORG"]}
+        {"id": "2", "tokens": ["UNICEF"], "labels": ["B-ORG"]},
     ]
 
     output_dir = tmp_path / "datasets"

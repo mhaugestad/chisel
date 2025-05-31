@@ -5,6 +5,7 @@ from chisel.extraction.models.models import Token, EntitySpan
 
 logger = logging.getLogger(__name__)
 
+
 class BIOLabeler(Labeler):
     """
     A labeler that converts character-based entity spans into BIO labels aligned with tokenized text.
@@ -33,10 +34,11 @@ class BIOLabeler(Labeler):
     List[str]
         A list of BIO-formatted labels, one for each input token.
     """
+
     def __init__(
         self,
         subword_strategy: Literal["first", "all", "strict"] = "all",
-        misalignment_policy: Literal["skip", "warn", "fail"] = "skip"
+        misalignment_policy: Literal["skip", "warn", "fail"] = "skip",
     ):
         self.subword_strategy = subword_strategy
         self.misalignment_policy = misalignment_policy
@@ -54,7 +56,8 @@ class BIOLabeler(Labeler):
 
         for entity in entities:
             matched_indices = [
-                idx for idx, token in enumerate(tokens)
+                idx
+                for idx, token in enumerate(tokens)
                 if not (token.end <= entity.start or token.start >= entity.end)
             ]
 

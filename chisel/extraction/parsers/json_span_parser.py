@@ -6,6 +6,7 @@ from chisel.extraction.models.models import EntitySpan
 
 import json
 
+
 class JSONSpanParser(Parser):
     def parse(self, doc: str) -> Tuple[str, List[EntitySpan]]:
         """
@@ -29,7 +30,7 @@ class JSONSpanParser(Parser):
         text = data["text"]
         entities = [
             EntitySpan(
-                text=text[e["start"]:e["end"]],
+                text=text[e["start"] : e["end"]],
                 start=e["start"],
                 end=e["end"],
                 label=e["label"],

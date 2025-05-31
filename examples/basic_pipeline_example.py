@@ -15,7 +15,7 @@ pipeline = PreprocessingPipeline(
     chunker=NoOpChunker(),
     labeler=BIOLabeler(),
     validator=BIOValidator(),
-    exporter=JSONExporter(output_path="examples/data/output_sample_2.json")
+    exporter=JSONExporter(output_path="examples/data/output_sample_2.json"),
 )
 
 pipeline.run("examples/data/input_sample.json")

@@ -1,5 +1,5 @@
 # Chisel
- 
+
 Refining text. Shaping labels.
 A modular and extensible preprocessing library for token classification tasks.
 

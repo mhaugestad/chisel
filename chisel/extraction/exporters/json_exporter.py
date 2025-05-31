@@ -1,6 +1,6 @@
 import json
 from typing import List, Dict
-from chisel.extraction.base.protocols import Exporter
+
 
 class JSONExporter:
 

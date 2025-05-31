@@ -1,9 +1,10 @@
 from chisel.extraction.base.protocols import Labeler
 from chisel.extraction.models.models import Token, EntitySpan
-from typing import List
+from typing import List, Literal
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class BinaryLabeler(Labeler):
     """
@@ -12,7 +13,7 @@ class BinaryLabeler(Labeler):
     Binary labels are produced with the following scheme:
     - ENTITY: Indicates a token that is part of an entity
     - O: Indicates a token that is outside any entity
-    
+
     Parameters:
     ----------
     subword_strategy : {'first', 'all', 'strict'}, default='all'
@@ -32,7 +33,12 @@ class BinaryLabeler(Labeler):
     List[str]
         A list of BILOU-formatted labels, one for each input token.
     """
-    def __init__(self, subword_strategy: str = "first", misalignment_policy: str = "skip"):
+
+    def __init__(
+        self,
+        subword_strategy: Literal["first", "all", "strict"] = "first",
+        misalignment_policy: Literal["skip", "warn", "fail"] = "skip",
+    ):
         self.subword_strategy = subword_strategy
         self.misalignment_policy = misalignment_policy
 
@@ -49,7 +55,8 @@ class BinaryLabeler(Labeler):
 
         for entity in entities:
             aligned = [
-                (i, token) for i, token in enumerate(tokens)
+                (i, token)
+                for i, token in enumerate(tokens)
                 if token.start >= entity.start and token.end <= entity.end
             ]
 
@@ -75,6 +82,8 @@ class BinaryLabeler(Labeler):
                     for i in token_indices:
                         labels[i] = "ENTITY"
             else:
-                raise ValueError(f"Unsupported subword strategy: {self.subword_strategy}")
+                raise ValueError(
+                    f"Unsupported subword strategy: {self.subword_strategy}"
+                )
 
         return labels

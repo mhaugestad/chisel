@@ -4,9 +4,10 @@ import pytest
 from chisel.extraction.parsers.json_span_parser import JSONSpanParser
 from chisel.extraction.models.models import EntitySpan
 
+
 def test_json_span_parser_basic():
     parser = JSONSpanParser()
-    json_str = '''
+    json_str = """
     {
         "text": "Tim Cook is the CEO of Apple.",
         "entities": [
@@ -14,7 +15,7 @@ def test_json_span_parser_basic():
             {"start": 23, "end": 28, "label": "ORG"}
         ]
     }
-    '''
+    """
     text, spans = parser.parse(json_str)
 
     assert text == "Tim Cook is the CEO of Apple."

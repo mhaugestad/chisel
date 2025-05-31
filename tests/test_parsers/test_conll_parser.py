@@ -2,6 +2,7 @@ import pytest
 from chisel.extraction.parsers.conll_parser import ConllParser
 from chisel.extraction.models.models import EntitySpan
 
+
 def test_conll_parser_basic_bio():
     parser = ConllParser()
 

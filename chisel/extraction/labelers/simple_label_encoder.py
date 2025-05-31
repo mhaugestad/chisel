@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+
 class SimpleLabelEncoder:
     def __init__(self) -> None:
         self.label_to_id: Dict[str, int] = {}
