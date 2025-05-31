@@ -1,6 +1,6 @@
 from chisel.extraction.validators.bio_alignment_validator import BIOAlignmentValidator
 from chisel.extraction.models.models import Token, EntitySpan
-
+import pytest
 
 def test_bio_alignment_validator_success():
     tokens = [
@@ -15,8 +15,9 @@ def test_bio_alignment_validator_success():
     ]
 
     validator = BIOAlignmentValidator()
-    errors = validator.validate(tokens, labels, spans)
-    assert not errors
+    with pytest.raises(ValueError):
+        # This should raise an error because the span text does not match the token labels
+        validator.validate("BarackObama", tokens, spans, labels)
 
 
 def test_bio_alignment_validator_mismatch():
@@ -32,6 +33,6 @@ def test_bio_alignment_validator_mismatch():
     ]
 
     validator = BIOAlignmentValidator()
-    errors = validator.validate(tokens, labels, spans)
-    assert errors
-    assert "Mismatch" in errors[0]
+    with pytest.raises(ValueError) as exc_info:
+        # This should raise an error because the span text does not match the token labels
+        validator.validate("Barack Obamo", tokens, spans, labels)

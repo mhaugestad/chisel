@@ -1,12 +1,12 @@
-from chisel.pipeline import PreprocessingPipeline
-from chisel.loaders.json_html_loader import JSONHTMLLoader
-from chisel.parsers.html_tag_parser import HTMLTagParser
-from chisel.tokenizers.simple_tokenizer import SimpleWhitespaceTokenizer
-from chisel.tokenizers.hf_tokenizer import HFTokenizer
-from chisel.chunkers.noop_chunker import NoOpChunker
-from chisel.labelers.bio_labeler import BIOLabeler
-from chisel.validators.bio_validator import BIOValidator
-from chisel.exporters.json_exporter import JSONExporter
+from chisel.extraction.pipeline import PreprocessingPipeline
+from chisel.extraction.loaders.json_html_loader import JSONHTMLLoader
+from chisel.extraction.parsers.html_tag_parser import HTMLTagParser
+from chisel.extraction.tokenizers.simple_tokenizer import SimpleWhitespaceTokenizer
+from chisel.extraction.tokenizers.hf_tokenizer import HFTokenizer
+from chisel.extraction.chunkers.noop_chunker import NoOpChunker
+from chisel.extraction.labelers.bio_labeler import BIOLabeler
+from chisel.extraction.validators.bio_validator import BIOValidator
+from chisel.extraction.exporters.json_exporter import JSONExporter
 
 pipeline = PreprocessingPipeline(
     loader=JSONHTMLLoader(),

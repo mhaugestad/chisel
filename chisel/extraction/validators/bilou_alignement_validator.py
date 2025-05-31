@@ -6,7 +6,7 @@ class BILOUAlignmentValidator:
     def __init__(self, ignore_whitespace: bool = True):
         self.ignore_whitespace = ignore_whitespace
 
-    def validate(self, tokens: List[Token], labels: List[str], entities: List[EntitySpan]) -> List[str]:
+    def validate(self, text: str, tokens: List[Token], entities: List[EntitySpan], labels: List[str]) -> List[str]:
         """
         Validates that BILOU-labeled spans correctly reconstruct the EntitySpan text.
         Returns a list of error messages if mismatches are found.

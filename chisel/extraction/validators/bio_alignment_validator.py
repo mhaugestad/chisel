@@ -6,7 +6,7 @@ class BIOAlignmentValidator:
     def __init__(self, ignore_whitespace: bool = True):
         self.ignore_whitespace = ignore_whitespace
 
-    def validate(self, tokens: List[Token], labels: List[str], entities: List[EntitySpan]) -> List[str]:
+    def validate(self, text: str, tokens: List[Token], entities: List[EntitySpan], labels: List[str]) -> List[str]:
         """
         Validates that BIO-labeled spans correctly reconstruct the EntitySpan text.
         Returns a list of error messages if mismatches are found.
@@ -19,8 +19,8 @@ class BIOAlignmentValidator:
         for i, label in enumerate(labels):
             if label.startswith("B-"):
                 if current_entity:
-                    errors.append(f"Unclosed entity before index {i}: {current_label}")
-                    current_entity = []
+                    raise ValueError(f"Unclosed entity before index {i}: {current_label}")
+                    #current_entity = []
 
                 current_label = label[2:]
                 current_entity = [tokens[i].text]
@@ -30,7 +30,7 @@ class BIOAlignmentValidator:
                 current_entity.append(tokens[i].text)
 
             elif label.startswith("I-") and not current_entity:
-                errors.append(f"Unexpected I- tag without preceding B- at index {i}")
+                raise ValueError(f"Unexpected I- tag without preceding B- at index {i}")
 
             else:  # label is "O" or some invalid format
                 if current_entity:
@@ -44,18 +44,16 @@ class BIOAlignmentValidator:
                             gold_text = gold_text.replace(" ", "")
 
                         if stitched != gold_text:
-                            errors.append(
+                            raise ValueError(
                                 f"Mismatch for entity '{current_label}' at {span.start}-{span.end}: "
                                 f"expected '{span.text}', got '{''.join(current_entity)}'"
                             )
                     else:
-                        errors.append(f"No matching span found for entity '{current_label}' starting at {current_start}")
+                        raise ValueError(f"No matching span found for entity '{current_label}' starting at {current_start}")
 
                     current_entity = []
                     current_label = None
                     current_start = None
-
-        return errors
 
     def _find_span(self, start: int, end: int, label: str, spans: List[EntitySpan]) -> EntitySpan | None:
         for span in spans:

@@ -1,4 +1,5 @@
-from chisel.extraction.base.protocols import Loader, Parser, Tokenizer, Chunker, Labeler, Validator, Exporter
+from chisel.extraction.base.protocols import Loader, Parser, Tokenizer, TokenChunker, TextChunker, Labeler, Validator, Exporter
+from typing import Union, List, Dict
 
 class PreprocessingPipeline:
     def __init__(
@@ -6,9 +7,9 @@ class PreprocessingPipeline:
         loader: Loader,
         parser: Parser,
         tokenizer: Tokenizer,
-        chunker: Chunker,
+        chunker: TokenChunker | TextChunker,
         labeler: Labeler,
-        validator: Validator,
+        validators: List[Validator],
         exporter: Exporter
     ):
         self.loader = loader
@@ -16,13 +17,13 @@ class PreprocessingPipeline:
         self.tokenizer = tokenizer
         self.chunker = chunker
         self.labeler = labeler
-        self.validator = validator
+        self.validators = validators
         self.exporter = exporter
 
     def run(self, input_path: str):
         documents = self.loader.load(input_path)
+        
         processed = []
-
         for doc in documents:
             text, spans = self.parser.parse(doc["html"])
             tokens = self.tokenizer.tokenize(text)
@@ -32,14 +33,14 @@ class PreprocessingPipeline:
                 token_texts = [t.text for t in chunk["tokens"]]
                 labels = self.labeler.label(chunk["tokens"], chunk["entities"])
 
-                if not self.validator.validate(token_texts, labels):
-                    raise ValueError(f"Invalid labels in document {doc['id']} chunk {chunk['chunk_id']}")
-
+                for validator in self.validators:
+                    validator.validate(token_texts, labels)
+              
                 processed.append({
                     "id": doc["id"],
                     "chunk_id": chunk["chunk_id"],
                     "tokens": token_texts,
-                    "labels": labels
+                    "labels": labels,  
                 })
 
         self.exporter.export(processed)
