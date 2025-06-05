@@ -1,7 +1,13 @@
-from typing import Protocol, List, Dict, Literal, Tuple
-from chisel.extraction.models.models import Token, EntitySpan
+from typing import Protocol, List, Dict, Literal, Tuple, runtime_checkable
+from chisel.extraction.models.models import (
+    Token,
+    EntitySpan,
+    TokenEntitySpan,
+    ChiselRecord,
+)
 
 
+@runtime_checkable
 class Loader(Protocol):
     """
     A protocol for loading raw annotated documents from disk or remote sources.
@@ -14,6 +20,7 @@ class Loader(Protocol):
         pass
 
 
+@runtime_checkable
 class Parser(Protocol):
     """
     A protocol for converting annotated documents into a plain text string and structured entity spans.
@@ -25,6 +32,7 @@ class Parser(Protocol):
         pass
 
 
+@runtime_checkable
 class Tokenizer(Protocol):
     """
     A protocol for converting raw text into a sequence of tokens with offsets and IDs.
@@ -36,16 +44,20 @@ class Tokenizer(Protocol):
         pass
 
 
+@runtime_checkable
 class TokenChunker(Protocol):
     """
-    A protocol for chunking sequences of tokens and entity spans into smaller, self-contained units.
+    A protocol for chunking sequences of tokens and aligned token entity spans into smaller, self-contained units.
 
     Useful for handling model input length constraints (e.g., max 512 tokens in BERT).
     """
 
-    def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]: ...
+    def chunk(
+        self, tokens: List[Token], entities: List[TokenEntitySpan]
+    ) -> Tuple[List[List[Token]], List[List[TokenEntitySpan]]]: ...
 
 
+@runtime_checkable
 class TextChunker(Protocol):
     """
     A protocol for chunking raw text and aligned entity spans before tokenization.
@@ -59,6 +71,20 @@ class TextChunker(Protocol):
     ) -> List[Tuple[str, List[EntitySpan]]]: ...
 
 
+class SpanAligner(Protocol):
+    """
+    A protocol for aligning entity spans with tokenized text.
+
+    This is necessary because tokenization can split words into subwords, and entities
+    may not align perfectly with the resulting tokens.
+    """
+
+    def align(
+        self, tokens: List[Token], entities: List[EntitySpan]
+    ) -> List[TokenEntitySpan]: ...
+
+
+@runtime_checkable
 class Labeler(Protocol):
     """
     A protocol for converting entity spans into token-level labels using a labeling scheme like BIO or BILOU.
@@ -80,26 +106,78 @@ class Labeler(Protocol):
     subword_strategy: Literal["first", "all", "strict"] = "strict"
     misalignment_policy: Literal["skip", "warn", "fail"] = "skip"
 
-    def label(self, tokens: List[Token], entities: List[EntitySpan]) -> List[str]:
-        pass
+    def label(
+        self, tokens: List[Token], token_entity_spans: List[TokenEntitySpan]
+    ) -> List[str]:
+        """
+        Assigns labels (e.g. BIO, BILOU) to a sequence of tokens using pre-aligned TokenEntitySpan objects.
+        """
+        ...
 
 
-class Validator(Protocol):
+@runtime_checkable
+class ParseValidator(Protocol):
     """
-    A protocol for validating text, tokens, entity spans, and labels to ensure preprocessing integrity.
+    A protocol for validating parsed entity spans before tokenization.
 
-    Implementations may check alignment between spans and text, label validity, or token-label consistency.
+    Responsibilities may include:
+    - Ensuring the `text` in each `EntitySpan` exists verbatim in the input `text`.
+    - Ensuring character start and end indices are valid and consistent with the span text.
+    - Detecting malformed or overlapping spans.
+
+    Inputs:
+        text (str): The full input string after parsing.
+        entities (List[EntitySpan]): The list of extracted spans from the parser.
+    """
+
+    on_error: Literal["warn", "raise"]
+
+    def validate(self, text: str, entities: List[EntitySpan]) -> None: ...
+
+
+@runtime_checkable
+class TokenAlignmentValidator(Protocol):
+    """
+    A protocol for validating that token-level alignments of entities are correct.
+
+    This is meant to ensure that the tokens corresponding to an entity span,
+    when decoded using the tokenizer, match the original text span.
+
+    Inputs:
+        tokens (List[Token]): Tokenized representation of the text.
+        token_entity_spans (List[TokenEntitySpan]): Entity spans with associated token indices.
+    """
+
+    on_error: Literal["warn", "raise"]
+
+    def validate(
+        self, tokens: List[Token], token_entity_spans: List[TokenEntitySpan]
+    ) -> None: ...
+
+
+@runtime_checkable
+class LabelAlignmentValidator(Protocol):
+    """
+    A protocol for validating that the output label sequence is consistent with entity spans.
+
+    This validator reconstructs spans from the label sequence (e.g., using BIO or BILOU)
+    and compares them to the expected token entity spans.
+
+    Inputs:
+        tokens (List[Token]): Tokenized representation of the text.
+        labels (List[str]): Label sequence assigned to each token.
+        token_entity_spans (List[TokenEntitySpan]): Expected token spans representing entities.
     """
 
     def validate(
         self,
-        text: str,
         tokens: List[Token],
-        entities: List[EntitySpan],
         labels: List[str],
+        token_entity_spans: List[TokenEntitySpan],
     ) -> None: ...
 
 
+@runtime_checkable
 class Exporter(Protocol):
     """
     A protocol for exporting processed datasets to external formats or destinations.
@@ -107,19 +185,35 @@ class Exporter(Protocol):
     Examples include exporting to JSON, Hugging Face datasets, or cloud storage.
     """
 
-    def export(self, data: List[Dict]) -> None:
+    def export(self, data: List[ChiselRecord]) -> None:
         pass
 
 
+@runtime_checkable
 class LabelEncoder(Protocol):
-    def fit(self, label_lists: List[List[str]]) -> None:
-        """Builds the label vocabulary from multiple BIO label sequences."""
+    """
+    A protocol for encoding and decoding string-based labels into integer format,
+    suitable for training classification models.
+
+    This encoder must be fitted before use.
+    """
+
+    def fit(self, label_sequences: List[List[str]]) -> None:
+        """Builds the label vocabulary from sequences of string labels."""
+        ...
 
     def encode(self, labels: List[str]) -> List[int]:
-        """Converts a single list of BIO labels to integer IDs."""
+        """Encodes a single list of string labels into integer labels."""
+        ...
 
     def decode(self, ids: List[int]) -> List[str]:
-        """Converts a list of integer IDs back to string labels."""
+        """Decodes a list of integers back into string labels."""
+        ...
 
-    def label2id(self, label: str) -> int: ...
-    def id2label(self, idx: int) -> str: ...
+    def get_label_to_id(self) -> dict:
+        """Returns the label-to-ID mapping."""
+        ...
+
+    def get_id_to_label(self) -> dict:
+        """Returns the ID-to-label mapping."""
+        ...

@@ -86,5 +86,4 @@ class HTMLTagParser(Parser):
 
         for child in soup.contents:
             clean_text += handle_node(child)
-
         return clean_text, entities

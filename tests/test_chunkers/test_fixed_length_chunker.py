@@ -1,39 +1,55 @@
 import pytest
-from chisel.extraction.chunkers.fixed_length_chunker import FixedLengthChunker
-from chisel.extraction.models.models import Token, EntitySpan
+from chisel.extraction.chunkers.fixed_length_chunker import FixedLengthTokenChunker
+from chisel.extraction.models.models import Token, EntitySpan, TokenEntitySpan
 
 
-def test_fixed_length_chunker_basic():
+@pytest.fixture
+def simple_data():
     tokens = [
-        Token(id=0, text="John", start=0, end=4),
-        Token(id=1, text="lives", start=5, end=10),
-        Token(id=2, text="in", start=11, end=13),
-        Token(id=3, text="New", start=14, end=17),
-        Token(id=4, text="York", start=18, end=22),
-        Token(id=5, text="City", start=23, end=27),
-        Token(id=6, text=".", start=27, end=28),
+        Token(id=i, text=f"T{i}", start=i*2, end=(i+1)*2)
+        for i in range(10)
     ]
+    # Entity from token index 2 to 4 (inclusive)
+    entity_span = EntitySpan(text="T2T3T4", start=4, end=10, label="ENT")
+    token_entity = TokenEntitySpan(entity=entity_span, token_indices=[2, 3, 4])
 
-    entities = [
-        EntitySpan(text="John", start=0, end=4, label="PER"),
-        EntitySpan(text="New York City", start=14, end=27, label="LOC"),
+    return tokens, [token_entity]
+
+
+def test_fixed_length_chunking_no_overlap(simple_data):
+    tokens, token_entities = simple_data
+    chunker = FixedLengthTokenChunker(max_tokens=5, overlap=0)
+    token_chunks, entity_chunks = chunker.chunk(tokens, token_entities)
+
+    assert len(token_chunks) == 2
+    assert all(len(chunk) <= 5 for chunk in token_chunks)
+
+    # Check that the entity is in the correct chunk
+    assert len(entity_chunks[0]) == 1
+    assert entity_chunks[1] == []
+
+
+def test_fixed_length_chunking_with_overlap(simple_data):
+    tokens, token_entities = simple_data
+    chunker = FixedLengthTokenChunker(max_tokens=5, overlap=2)
+    token_chunks, entity_chunks = chunker.chunk(tokens, token_entities)
+
+    assert len(token_chunks) == 3
+    assert all(len(chunk) <= 5 for chunk in token_chunks)
+
+    # Check if the entity appears in the correct overlapping chunk
+    found = any(e.entity.label == "ENT" for chunk in entity_chunks for e in chunk)
+    assert found
+
+
+def test_no_entities_still_chunks():
+    tokens = [
+        Token(id=i, text=f"T{i}", start=i*2, end=(i+1)*2)
+        for i in range(6)
     ]
+    chunker = FixedLengthTokenChunker(max_tokens=3, overlap=1)
+    token_chunks, entity_chunks = chunker.chunk(tokens, [])
 
-    chunker = FixedLengthChunker(max_tokens=4, overlap=1)
-    chunks = chunker.chunk(tokens, entities)
-
-    assert len(chunks) == 3
-
-    # Chunk 0
-    assert [t.text for t in chunks[0]["tokens"]] == ["John", "lives", "in", "New"]
-    assert [(e.text, e.label) for e in chunks[0]["entities"]] == [("John", "PER")]
-
-    # Chunk 1
-    assert [t.text for t in chunks[1]["tokens"]] == ["New", "York", "City", "."]
-    assert [(e.text, e.label) for e in chunks[1]["entities"]] == [
-        ("New York City", "LOC")
-    ]
-
-    # Chunk 2
-    assert [t.text for t in chunks[2]["tokens"]] == ["."]
-    assert chunks[2]["entities"] == []
+    assert len(token_chunks) == 3
+    assert all(isinstance(chunk, list) for chunk in token_chunks)
+    assert all(ec == [] for ec in entity_chunks)

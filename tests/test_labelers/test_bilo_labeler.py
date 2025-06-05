@@ -1,154 +1,62 @@
 import pytest
-from transformers import AutoTokenizer
+from chisel.extraction.models.models import Token, EntitySpan, TokenEntitySpan
 from chisel.extraction.labelers.bilo_labeler import BILOLabeler
-from chisel.extraction.models.models import Token, EntitySpan
 
-
-@pytest.fixture(scope="module")
-def tokenizer():
-    return AutoTokenizer.from_pretrained("bert-base-uncased")
-
-
-def make_tokens(tokenizer, text):
-    encoding = tokenizer(text, return_offsets_mapping=True, add_special_tokens=False)
-    return [
-        Token(
-            id=input_id,
-            text=tokenizer.convert_ids_to_tokens([input_id])[0],
-            start=start,
-            end=end,
-        )
-        for input_id, (start, end) in zip(
-            encoding["input_ids"], encoding["offset_mapping"]
-        )
-    ]
-
-
-def test_bilo_labeler_single_token_entity(tokenizer):
-    text = "Google announced a new feature."
-    entity = EntitySpan(text="Google", start=0, end=6, label="ORG")
-
-    encoding = tokenizer(text, return_offsets_mapping=True, add_special_tokens=False)
+def test_bilou_labeler_single_token_span():
     tokens = [
-        Token(
-            id=input_id,
-            text=tokenizer.convert_ids_to_tokens([input_id])[0],
-            start=start,
-            end=end,
-        )
-        for input_id, (start, end) in zip(
-            encoding["input_ids"], encoding["offset_mapping"]
-        )
+        Token(id=1, text="Barack", start=0, end=6),
+        Token(id=2, text="Obama", start=7, end=12),
+        Token(id=3, text="visited", start=13, end=20),
     ]
+    span = EntitySpan(text="Barack", start=0, end=6, label="PER")
+    token_entity_span = TokenEntitySpan(entity=span, token_indices=[0])
 
-    labeler = BILOLabeler(subword_strategy="first")
-    labels = labeler.label(tokens, [entity])
+    labeler = BILOLabeler()
+    labels = labeler.label(tokens, [token_entity_span])
+    assert labels == ["U-PER", "O", "O"]
 
-    assert labels[0] == "U-ORG"
-    assert all(label == "O" for label in labels[1:])
-
-
-def test_bilo_labeler_multi_token_entity(tokenizer):
-    text = "Barack Obama visited Berlin."
-    entity = EntitySpan(text="Barack Obama", start=0, end=12, label="PER")
-
-    encoding = tokenizer(text, return_offsets_mapping=True, add_special_tokens=False)
+def test_bilou_labeler_multi_token_span():
     tokens = [
-        Token(
-            id=input_id,
-            text=tokenizer.convert_ids_to_tokens([input_id])[0],
-            start=start,
-            end=end,
-        )
-        for input_id, (start, end) in zip(
-            encoding["input_ids"], encoding["offset_mapping"]
-        )
+        Token(id=1, text="Barack", start=0, end=6),
+        Token(id=2, text="Obama", start=7, end=12),
+        Token(id=3, text="visited", start=13, end=20),
     ]
+    span = EntitySpan(text="Barack Obama", start=0, end=12, label="PER")
+    token_entity_span = TokenEntitySpan(entity=span, token_indices=[0, 1])
 
-    labeler = BILOLabeler(subword_strategy="all")
-    labels = labeler.label(tokens, [entity])
+    labeler = BILOLabeler()
+    labels = labeler.label(tokens, [token_entity_span])
+    assert labels == ["B-PER", "L-PER", "O"]
 
-    entity_labels = [l for l in labels if l != "O"]
-    assert entity_labels[0] == "B-PER"
-    assert entity_labels[-1] == "L-PER"
-    if len(entity_labels) > 2:
-        for middle in entity_labels[1:-1]:
-            assert middle == "I-PER"
-
-
-def test_misaligned_entity_fail(tokenizer):
-    text = "Apple released a product."
-    tokens = make_tokens(tokenizer, text)
-
-    # Deliberately misaligned entity span
-    entity = EntitySpan(text="XYZ", start=100, end=103, label="MISC")
-
-    labeler = BILOLabeler(misalignment_policy="fail")
-    with pytest.raises(ValueError, match="No tokens align with entity span"):
-        labeler.label(tokens, [entity])
-
-
-def test_misaligned_entity_warn(tokenizer, caplog):
-    text = "Apple released a product."
-    tokens = make_tokens(tokenizer, text)
-
-    entity = EntitySpan(text="XYZ", start=100, end=103, label="MISC")
-
-    labeler = BILOLabeler(misalignment_policy="warn")
-    with caplog.at_level("WARNING"):
-        labels = labeler.label(tokens, [entity])
-
-    assert "No tokens align with entity span" in caplog.text
-    assert all(label == "O" for label in labels)
-
-
-def test_misaligned_entity_skip(tokenizer):
-    text = "Apple released a product."
-    tokens = make_tokens(tokenizer, text)
-
-    entity = EntitySpan(text="XYZ", start=100, end=103, label="MISC")
-
-    labeler = BILOLabeler(misalignment_policy="skip")
-    labels = labeler.label(tokens, [entity])
-
-    assert all(label == "O" for label in labels)
-
-
-@pytest.mark.parametrize(
-    "model_name",
-    [
-        "bert-base-uncased",  # WordPiece
-        "roberta-base",  # BPE
-        "albert-base-v2",  # SentencePiece
-        "xlm-roberta-base",  # SPM+BPE
-    ],
-)
-def test_bilo_labeler_multitoken_entity_on_various_tokenizers(model_name):
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    text = "Barack Obama visited Berlin."
-    entity = EntitySpan(text="Barack Obama", start=0, end=12, label="PER")
-
-    encoding = tokenizer(text, return_offsets_mapping=True, add_special_tokens=False)
+def test_bilou_labeler_multiple_spans():
     tokens = [
-        Token(
-            id=token_id,
-            text=tokenizer.convert_ids_to_tokens([token_id])[0],
-            start=start,
-            end=end,
-        )
-        for token_id, (start, end) in zip(
-            encoding["input_ids"], encoding["offset_mapping"]
-        )
+        Token(id=1, text="Barack", start=0, end=6),
+        Token(id=2, text="Obama", start=7, end=12),
+        Token(id=3, text="met", start=13, end=16),
+        Token(id=4, text="Angela", start=17, end=23),
+        Token(id=5, text="Merkel", start=24, end=30),
+    ]
+    span1 = EntitySpan(text="Barack Obama", start=0, end=12, label="PER")
+    span2 = EntitySpan(text="Angela Merkel", start=17, end=30, label="PER")
+    token_entity_spans = [
+        TokenEntitySpan(entity=span1, token_indices=[0, 1]),
+        TokenEntitySpan(entity=span2, token_indices=[3, 4])
     ]
 
-    labeler = BILOLabeler(subword_strategy="all")
-    labels = labeler.label(tokens, [entity])
-    entity_labels = [l for l in labels if l != "O"]
+    labeler = BILOLabeler()
+    labels = labeler.label(tokens, token_entity_spans)
+    assert labels == ["B-PER", "L-PER", "O", "B-PER", "L-PER"]
 
-    if len(entity_labels) == 1:
-        assert entity_labels[0].startswith("U-")
-    else:
-        assert entity_labels[0].startswith("B-")
-        assert entity_labels[-1].startswith("L-")
-        for l in entity_labels[1:-1]:
-            assert l.startswith("I-")
+def test_bilou_labeler_inside_span():
+    tokens = [
+        Token(id=1, text="The", start=0, end=3),
+        Token(id=2, text="Barack", start=4, end=10),
+        Token(id=3, text="Hussein", start=11, end=18),
+        Token(id=4, text="Obama", start=19, end=24),
+    ]
+    span = EntitySpan(text="Barack Hussein Obama", start=4, end=24, label="PER")
+    token_entity_span = TokenEntitySpan(entity=span, token_indices=[1, 2, 3])
+
+    labeler = BILOLabeler()
+    labels = labeler.label(tokens, [token_entity_span])
+    assert labels == ["O", "B-PER", "I-PER", "L-PER"]

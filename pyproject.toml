@@ -12,7 +12,7 @@ license = { file = "LICENSE" }
 dependencies = [
   "pydantic>=2.0",
   "transformers>=4.0",
-  "beautifulsoup4",
+  "beautifulsoup4"
 ]
 
 [project.optional-dependencies]

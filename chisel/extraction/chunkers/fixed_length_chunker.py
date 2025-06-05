@@ -1,49 +1,49 @@
-from typing import List, Dict
-from chisel.extraction.models.models import Token, EntitySpan
+from typing import List, Tuple
+from chisel.extraction.models.models import Token, TokenEntitySpan
 
 
-class FixedLengthChunker:
+# Implement the fixed-length chunker
+class FixedLengthTokenChunker:
     def __init__(self, max_tokens: int = 256, overlap: int = 0):
-        """Initializes the FixedLengthChunker with a maximum token length and overlap.
-        Args:
-            max_tokens (int): Maximum number of tokens per chunk.
-            overlap (int): Number of tokens to overlap between consecutive chunks.
-        """
         self.max_tokens = max_tokens
         self.overlap = overlap
 
-    def chunk(self, tokens: List[Token], entities: List[EntitySpan]) -> List[Dict]:
-        """Chunks the provided tokens and entities into fixed-length segments.
-        Args:
-            tokens (List[Token]): List of tokens to be chunked.
-            entities (List[EntitySpan]): List of entity spans associated with the tokens.
-        Returns:
-            List[Dict]: A list of dictionaries, each containing a chunk of tokens and their associated entities.
-        """
-        chunks = []
-        stride = self.max_tokens - self.overlap
+    def chunk(
+        self, tokens: List[Token], entities: List[TokenEntitySpan]
+    ) -> Tuple[List[List[Token]], List[List[TokenEntitySpan]]]:
+        chunks_tokens = []
+        chunks_entities = []
         i = 0
+        stride = self.max_tokens - self.overlap
 
         while i < len(tokens):
             token_chunk = tokens[i : i + self.max_tokens]
+
+            # Stop if the chunk would be too small (e.g. last chunk has only 1 token)
+            if len(token_chunk) < self.overlap and i != 0:
+                break
+
             token_start = token_chunk[0].start
-            token_end = token_chunk[-1].end
 
-            # Filter entities that fall fully inside this chunk
-            chunk_entities = [
-                EntitySpan(
-                    text=e.text,
-                    start=e.start - token_start,
-                    end=e.end - token_start,
-                    label=e.label,
-                    attributes=e.attributes,
-                )
-                for e in entities
-                if token_start <= e.start and e.end <= token_end
-            ]
+            # Filter and shift TokenEntitySpans
+            chunk_entities = []
+            for e in entities:
+                if all(i <= idx < i + self.max_tokens for idx in e.token_indices):
+                    shifted_indices = [idx - i for idx in e.token_indices]
+                    shifted_entity = e.entity.copy(
+                        update={
+                            "start": e.entity.start - token_start,
+                            "end": e.entity.end - token_start,
+                        }
+                    )
+                    chunk_entities.append(
+                        TokenEntitySpan(
+                            entity=shifted_entity, token_indices=shifted_indices
+                        )
+                    )
 
-            # Offset tokens to be chunk-relative
-            chunk_tokens = [
+            # Shift tokens
+            shifted_tokens = [
                 Token(
                     id=t.id,
                     text=t.text,
@@ -53,10 +53,9 @@ class FixedLengthChunker:
                 for t in token_chunk
             ]
 
-            chunks.append(
-                {"tokens": chunk_tokens, "entities": chunk_entities, "offset": i}
-            )
+            chunks_tokens.append(shifted_tokens)
+            chunks_entities.append(chunk_entities)
 
             i += stride
 
-        return chunks
+        return chunks_tokens, chunks_entities

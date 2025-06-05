@@ -1,0 +1,42 @@
+site_name: Chisel
+repo_url: https://github.com/your-org/chisel
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.instant
+    - toc.integrate
+    - content.code.annotate
+    - content.action.edit
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+  - literate-nav
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Components:
+      - Parsers: components/parsers.md
+      - Tokenizers: components/tokenizers.md
+      - Labelers: components/labelers.md
+      - Chunkers: components/chunkers.md
+      - Validators: components/validators.md
+      - Exporters: components/exporters.md
+  - Pipelines:
+      - NCBI: pipelines/ncbi_pipeline.md
+  - Examples:
+      - CoNLL: examples/conll.md
+      - NCBI: examples/ncbi.md
+  - Reference: reference/chisel.md

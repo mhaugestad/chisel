@@ -40,31 +40,8 @@ pip install -e .
 ```
 
 # Quick Start Example
-```
-from chisel import PreprocessingPipeline
-from chisel.loaders import JSONHTMLLoader
-from chisel.parsers import HTMLTagParser
-from chisel.tokenizers import HFTokenizer
-from chisel.chunkers import SlidingWindowChunker
-from chisel.labelers import SimpleBIOLabeler
-from chisel.validators import BIOValidator
-from chisel.exporters import JSONExporter
-from chisel.schemas import LabelSchema
 
-schema = LabelSchema(labels=["O", "B-PER", "I-PER", "B-ORG", "I-ORG"])
-
-pipeline = PreprocessingPipeline(
-    loader=JSONHTMLLoader(),
-    parser=HTMLTagParser(),
-    tokenizer=HFTokenizer(model_name="bert-base-cased"),
-    chunker=SlidingWindowChunker(max_length=512, stride=128),
-    labeler=SimpleBIOLabeler(schema=schema),
-    validator=BIOValidator(schema=schema),
-    exporter=JSONExporter()
-)
-
-pipeline.run("data/input.json", "data/output.json")
-```
+TODO:
 
 # Project Principles
 * Modularity: Components do one thing well
@@ -72,20 +49,26 @@ pipeline.run("data/input.json", "data/output.json")
 * Testability: Core functionality is covered by unit and integration tests
 * Transparency: Minimal hidden "magic" — explicit behavior
 
-Roadmap
-- [] Core preprocessing pipeline
+# 🛣 Roadmap
 
-- [] Sliding window chunker
+## 🔜 Short-Term Goals
 
-- [] Sentence-based chunker
+- 🔧 Improve and extend existing components to support a broader range of annotation formats (e.g., HTML, XML, JSON), use cases and cover edge cases.
 
-- [] Augmentation framework
+- 📦 Extend exporters to support common data versioning and packaging frameworks (e.g., HuggingFace Datasets, DVC).
 
-- [] CLI runner for pipelines
+- 🧠 Add spaCy compatibility (e.g., custom tokenizers, DocBin export, entity span management).
 
-- [] HuggingFace Dataset export integration
+## 🚀 Long-Term Vision
+🌐 Expand to additional neural NLP preprocessing tasks, such as:
 
-- [] Streamlit or Gradio visualization tools (future)
+- Graph-based representations (e.g., for GNNs).
+
+- Entity linking and disambiguation.
+
+- Relationship extraction and coreference resolution.
+
+- ⚙️ Build plug-and-play components for end-to-end information extraction pipelines.
 
 
 # Contributing
@@ -93,9 +76,9 @@ Contributions are welcome!
 
 * Fork the repo
 * Create a feature branch
+* Do some coding.
+* Make sure to pass the pre-commit
+* Make sure to pass the test suites
 * Open a pull request with clear description and tests
 
 Please ensure your code adheres to the existing modular structure and follows SOLID principles.
-
-# License
-(Define later — probably MIT, Apache 2.0, or similar.)
