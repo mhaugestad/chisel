@@ -27,7 +27,7 @@ jobs:
 
       - name: Lint with ruff
         run: |
-          ruff chisel tests
+          run: ruff check chisel tests
 
       - name: Check formatting with black
         run: |
