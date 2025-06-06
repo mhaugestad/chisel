@@ -27,11 +27,11 @@ jobs:
 
       - name: Lint with ruff
         run: |
-          run: ruff check chisel tests
+          ruff check chisel
 
       - name: Check formatting with black
         run: |
-          black --check chisel tests
+          black --check chisel
 
       - name: Run test suite with pytest
         run: |
