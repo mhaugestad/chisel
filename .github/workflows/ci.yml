@@ -34,6 +34,6 @@ jobs:
           black --check chisel
 
       - name: Run test suite with pytest
-        run: |
-          export PYTHONPATH=.
-          pytest --maxfail=1 --disable-warnings --cov=instantre --cov-report=term-missing
+        run: pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}
