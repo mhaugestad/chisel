@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import List, Optional
 
 
@@ -49,7 +49,7 @@ class ChiselRecord(BaseModel):
     tokens: List[Token]
     entities: List[EntitySpan]
 
-    bio_labels: Optional[List[str]] = Field(default=None, alias="bio-labels")
+    bio_labels: Optional[List[str]] = None
     labels: Optional[List[int]] = None
     input_ids: Optional[List[int]] = None
     attention_mask: Optional[List[int]] = None

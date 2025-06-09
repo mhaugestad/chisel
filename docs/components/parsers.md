@@ -37,47 +37,10 @@ Cleaned Text: `"The UN met with Joe Biden today."`
 
 
 ### 2. JSONSpanParser
-Parses a dictionary with plain text and list of character-based annotations.
-
-🧪 Example Input
-```json
-{
-  "text": "Barack Obama was president.",
-  "entities": [
-    {"start": 0, "end": 12, "label": "PER"}
-  ]
-}
-```
-
-✅ Output
-
-Cleaned Text: `"Barack Obama was president."`
-
-`EntitySpan(label="PER", start=0, end=12, text="Barack Obama")`
-
+To be written. There is an example implementation in the examples folder on git.
 
 ### 3. ConllParser
-Parses text in CoNLL format with token-level BIO or BILOU tags
-
-🧪 Example Input
-```
-Tim B-PER
-Cook I-PER
-is O
-the O
-CEO O
-of O
-Apple B-ORG
-. O
-```
-
-✅ Output
-
-Cleaned Text: `"Tim Cook is the CEO of Apple."`
-
-`EntitySpan(label="PER", start=0, end=8, text="Tim Cook")`
-
-`EntitySpan(label="ORG", start=24, end=29, text="Apple")`
+To be written. There is an example implementation in the examples folder on git.
 
 ### 🧠 Notes
 Parsers are intentionally minimal and decoupled from tokenization.
@@ -92,7 +55,7 @@ To implement your own parser, simply conform to the protocol:
 
 ```
 class MyCustomParser:
-    def parse(self, doc: str) -> tuple[str, List[EntitySpan]]:
+    def parse(self, doc: str) -> Tuple[str, List[EntitySpan]]:
         # 1. Extract raw text
         # 2. Identify annotated spans with start, end, label
         # 3. Return cleaned text and EntitySpan list

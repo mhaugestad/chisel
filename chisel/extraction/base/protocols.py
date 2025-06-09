@@ -198,10 +198,6 @@ class LabelEncoder(Protocol):
     This encoder must be fitted before use.
     """
 
-    def fit(self, label_sequences: List[List[str]]) -> None:
-        """Builds the label vocabulary from sequences of string labels."""
-        ...
-
     def encode(self, labels: List[str]) -> List[int]:
         """Encodes a single list of string labels into integer labels."""
         ...

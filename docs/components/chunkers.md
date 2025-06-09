@@ -61,20 +61,6 @@ chunks = chunker.chunk(tokens, entities)
 ```
 Entities that do not fully fit within the chunk are excluded.
 
-### SlidingWindowChunker
-Splits tokens using a sliding window strategy.
-
-```
-from chisel.chunkers import SlidingWindowChunker
-
-chunker = SlidingWindowChunker(chunk_size=128, stride=64)
-chunks = chunker.chunk(tokens, entities)
-```
-
-- Allows overlapping chunks.
-
-- Entities can appear in multiple chunks depending on alignment.
-
 
 ## ⚙️ Notes on Entity Alignment
 Chunkers are responsible for excluding entities that cross chunk boundaries.

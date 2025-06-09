@@ -40,8 +40,7 @@ pip install -e .
 ```
 
 # Quick Start Example
-
-TODO:
+See the examples folder for notebooks demonstrating how to use Chisel with common annotation formats.
 
 # Project Principles
 * Modularity: Components do one thing well
@@ -55,7 +54,7 @@ TODO:
 
 - 🔧 Improve and extend existing components to support a broader range of annotation formats (e.g., HTML, XML, JSON), use cases and cover edge cases.
 
-- 📦 Extend exporters to support common data versioning and packaging frameworks (e.g., HuggingFace Datasets, DVC).
+- 📦 Implement exporters to support common data versioning and packaging frameworks (e.g., HuggingFace Datasets, DVC).
 
 - 🧠 Add spaCy compatibility (e.g., custom tokenizers, DocBin export, entity span management).
 
@@ -78,7 +77,7 @@ Contributions are welcome!
 * Create a feature branch
 * Do some coding.
 * Make sure to pass the pre-commit
-* Make sure to pass the test suites
+* Make sure to pass the unit test suites and implement tests on any new features developed
 * Open a pull request with clear description and tests
 
-Please ensure your code adheres to the existing modular structure and follows SOLID principles.
+Please strive to ensure your code adheres to the existing modular structure and follows SOLID principles.

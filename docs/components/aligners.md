@@ -1,4 +1,4 @@
-# 🧩 Aligners
+# 🧩 SpanAligners
 Aligners are responsible for mapping annotated character-based entity spans onto their corresponding token indices after tokenization. This step is crucial for generating label sequences in BIO, BILOU, or binary tagging formats.
 
 ## ✅ Responsibilities

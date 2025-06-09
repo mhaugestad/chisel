@@ -85,3 +85,58 @@ BIO/BILOU output is compatible with most token classification models.
 Use LabelEncoder to convert string labels to integer IDs.
 
 For debugging span alignment, use TokenAlignmentValidator.
+
+
+## 🔢 LabelEncoder
+
+The SimpleLabelEncoder is a lightweight utility for converting between string-based labels (e.g. "B-PER", "O") and integer IDs required by most machine learning frameworks.
+
+Unlike typical encoders, this version requires you to pass in the label mapping explicitly at initialization — making its behavior predictable and immutable.
+
+### 🧰 Features
+Requires an explicit label_to_id dictionary at initialization.
+
+- Converts labels to IDs (encode) and vice versa (decode).
+
+- Throws helpful errors if unknown labels or IDs are encountered.
+
+- Can be used internally in export pipelines for Hugging Face and PyTorch compatibility.
+
+### 🧪 Example
+```
+from chisel.extraction.labelers.label_encoder import SimpleLabelEncoder
+
+# Define a label-to-id mapping
+label_map = {
+    "O": 0,
+    "B-PER": 1,
+    "I-PER": 2,
+    "B-LOC": 3,
+    "I-LOC": 4
+}
+
+encoder = SimpleLabelEncoder(label_to_id=label_map)
+
+# Encode a list of labels
+label_ids = encoder.encode(["B-PER", "I-PER", "O"])  # ➝ [1, 2, 0]
+
+# Decode a list of label IDs
+decoded = encoder.decode([1, 2, 0])  # ➝ ["B-PER", "I-PER", "O"]
+```
+
+### ⚠️ Error Handling
+If you try to encode or decode unknown values, the encoder raises a clear error:
+
+```
+encoder.encode(["B-ORG"])  
+# ValueError: Unknown label 'B-ORG' encountered during encoding.
+```
+
+### 📦 API Reference
+
+| Method              | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `encode(labels)`    | Convert list of label strings to integer IDs      |
+| `decode(ids)`       | Convert list of integer IDs back to label strings |
+| `get_label_to_id()` | Return internal label → ID dictionary             |
+| `get_id_to_label()` | Return internal ID → label dictionary             |
