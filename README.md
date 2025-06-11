@@ -3,7 +3,7 @@
 Refining text. Shaping labels.
 A modular and extensible preprocessing library for token classification tasks.
 
-Chisel is a prprocessing library for token classification problems such as Named Entity Recognition (NER), Part-of-speech tagging, or custom span labelling tasks.
+Chisel is a preprocessing library for token classification problems such as Named Entity Recognition (NER), Part-of-speech tagging, or custom span labelling tasks.
 
 It turns raw annotated documents into model-ready datasets - handling tokenization, chunking, label alignment, validation and exporting following SOLID principles for maintainabiliyt and scalability.
 
@@ -12,7 +12,7 @@ Whether you are training a BERT model, fine-tuning a DistilBERT for NER or handl
 
 # Why Chisel?
 Modern token classification tasks face common challenges.
-* Mapping noisy or annotated text into structured BIO labels
+* Mapping noisy or annotated text into structured labels (BIO, BILOU, ...)
 * Handling tokenization artifacts (ie subwords, special characters)
 * Dealing with model length limits
 * Ensuring label alignment after chunking or splitting
@@ -21,14 +21,9 @@ Modern token classification tasks face common challenges.
 Chisel solves these problems by offering well-structured components that you can plug, swap or extend based on your needs.
 
 # Key Features
-* Modular Design: Loader → Parser → Tokenizer → Chunker → Labeler → Validator → Exporter
-* SOLID Principles: Clean, extensible architecture
-* BIO Label Handling: Automatic BIO encoding from spans
-* Long Sequence Support: Sliding window chunker and sentence-based chunker
-* Typed Data Models: Pydantic-backed, schema-validated classes
-* Pluggable Components: Easy to add custom tokenizers, chunkers, or labelers
-* Configurable Pipelines: YAML/JSON based pipeline configs
-* Friendly Logging: Consistent, minimal logging throughout the pipeline
+* Modular Design
+* Clean, extensible architecture
+* Pluggable Components
 
 # Installation
 (Coming soon when packaging ready — or locally installable for now.)
@@ -56,7 +51,7 @@ See the examples folder for notebooks demonstrating how to use Chisel with commo
 
 - ✨ Add support for multilabel tasks (i.e. overlapping spans).
 
-- 📦 Implement exporters to support common data versioning and packaging frameworks (e.g., HuggingFace Datasets, DVC).
+- 📦 Implement exporters to support common data versioning and packaging frameworks (e.g., HuggingFace Datasets, DVC, PyTorch Dataset, etc).
 
 - 🧠 Add spaCy compatibility (e.g., custom tokenizers, DocBin export, entity span management).
 
