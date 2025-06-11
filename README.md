@@ -34,7 +34,7 @@ Chisel solves these problems by offering well-structured components that you can
 (Coming soon when packaging ready — or locally installable for now.)
 
 ```
-git clone https://github.com/yourname/chisel.git
+git clone https://github.com/mhaugestad/chisel.git
 cd chisel
 pip install -e .
 ```
@@ -54,6 +54,8 @@ See the examples folder for notebooks demonstrating how to use Chisel with commo
 
 - 🔧 Improve and extend existing components to support a broader range of annotation formats (e.g., HTML, XML, JSON), use cases and cover edge cases.
 
+- ✨ Add support for multilabel tasks (i.e. overlapping spans).
+
 - 📦 Implement exporters to support common data versioning and packaging frameworks (e.g., HuggingFace Datasets, DVC).
 
 - 🧠 Add spaCy compatibility (e.g., custom tokenizers, DocBin export, entity span management).
@@ -66,6 +68,8 @@ See the examples folder for notebooks demonstrating how to use Chisel with commo
 - Entity linking and disambiguation.
 
 - Relationship extraction and coreference resolution.
+
+- Extractive Q and A
 
 - ⚙️ Build plug-and-play components for end-to-end information extraction pipelines.
 
