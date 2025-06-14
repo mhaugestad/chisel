@@ -142,4 +142,4 @@ data = formatter.format(processed_data)
 ```
 
 ### ✅ Output
-You now have model ready hugginface dataset!
+You now have a HuggingFace dataset ready!
