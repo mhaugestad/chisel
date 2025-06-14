@@ -127,5 +127,5 @@ data = formatter.format(processed_data)
 ```
 
 ### ✅ Output
-You now have torch dataset ready for analysis!
+You now have a Torch dataset ready for analysis!
 
