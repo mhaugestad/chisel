@@ -76,7 +76,7 @@ from chisel.extraction.span_aligners.token_span_aligner import TokenSpanAligner
 from chisel.extraction.labelers.bio_labeler import BIOLabeler
 from chisel.extraction.labelers.label_encoder import SimpleLabelEncoder
 from chisel.extraction.validators.validators import DefaultParseValidator, HFTokenAlignmentValidator
-from chisel.extraction.exporters.dataset_exporter import DatasetExporter
+from chisel.extraction.formatters.hf_formatter import HFDatasetFormatter
 from chisel.extraction.models.models import ChiselRecord
 ```
 
@@ -101,7 +101,7 @@ label_encoder = SimpleLabelEncoder(label_to_id={
 
 parse_validators = [DefaultParseValidator()]
 label_validators = [HFTokenAlignmentValidator(tokenizer=tokenizer.tokenizer)]
-exporter = DatasetExporter(output_path="data/conll.pkl")
+formatter = HFDatasetFormatter()
 ```
 
 ## 🔄 Step 4: Run the Pipeline
@@ -137,7 +137,9 @@ for idx, example in enumerate(docs):
     )
 
     processed_data.append(record)
+
+data = formatter.format(processed_data)
 ```
 
 ### ✅ Output
-You now have a list of ChiselRecord objects in processed_data, ready for training or export!
+You now have model ready hugginface dataset!

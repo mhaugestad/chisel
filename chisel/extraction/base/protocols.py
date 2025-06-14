@@ -1,4 +1,4 @@
-from typing import Protocol, List, Dict, Literal, Tuple, runtime_checkable
+from typing import Protocol, List, Dict, Literal, Tuple, Any, runtime_checkable
 from chisel.extraction.models.models import (
     Token,
     EntitySpan,
@@ -175,6 +175,11 @@ class LabelAlignmentValidator(Protocol):
         labels: List[str],
         token_entity_spans: List[TokenEntitySpan],
     ) -> None: ...
+
+
+@runtime_checkable
+class DatasetFormatter(Protocol):
+    def format(self, records: List[ChiselRecord]) -> Any: ...
 
 
 @runtime_checkable
