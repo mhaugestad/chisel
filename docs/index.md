@@ -33,7 +33,7 @@ Chisel follows a modular pipeline architecture with pluggable components:
 | **Labeler**   | Converts token-level alignment into BIO, BILOU, or binary tags |
 | **ParseValidator** | Ensures consistency between text and character spans|
 | **TokenValidator** | Ensures consistency between character spans, tokens and labels  |
-| **Exporter**  | Saves the final processed data to your preferred format. NOTE THIS IS STILL NOT IMPLEMENTED |
+| **Formatters**  | Turns the final processed data to your preferred format |
 
 Each component follows a defined Protocol, so you can swap in custom implementations as needed.
 

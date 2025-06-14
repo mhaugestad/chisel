@@ -59,6 +59,7 @@ from chisel.extraction.span_aligners.token_span_aligner import TokenSpanAligner
 from chisel.extraction.labelers.bio_labeler import BIOLabeler
 from chisel.extraction.labelers.label_encoder import SimpleLabelEncoder
 from chisel.extraction.validators.validators import DefaultParseValidator, HFTokenAlignmentValidator
+from chisel.extraction.formatters.torch_formatter import TorchDatasetFormatter
 from chisel.extraction.models.models import ChiselRecord
 ```
 
@@ -84,6 +85,7 @@ label_encoder = SimpleLabelEncoder(label_to_id={
 })
 parse_validators = [DefaultParseValidator()]
 label_validators = [HFTokenAlignmentValidator(tokenizer=tokenizer.tokenizer)]
+formatter = TorchDatasetFormatter()
 ```
 
 ### 🔄 Step 4: Run the Pipeline
@@ -120,8 +122,10 @@ for example in annotations:
             labels=encoded_labels
         )
         processed_data.append(record)
+
+data = formatter.format(processed_data)
 ```
 
 ### ✅ Output
-You now have a list of ChiselRecord objects in processed_data, ready for training or export!
+You now have a Torch dataset ready for analysis!
 

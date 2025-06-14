@@ -35,6 +35,7 @@ class Token(BaseModel):
 Wraps any pretrained Hugging Face tokenizer (AutoTokenizer) and outputs properly aligned Token objects.
 
 🔧 Parameters
+
 | Name       | Description                                                                 |
 | ---------- | --------------------------------------------------------------------------- |
 | `model_id` | Pretrained model name (e.g., `"bert-base-uncased"`, `"distilroberta-base"`) |

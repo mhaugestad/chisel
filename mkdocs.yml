@@ -31,8 +31,9 @@ nav:
       - Tokenizers: components/tokenizers.md
       - Labelers: components/labelers.md
       - Chunkers: components/chunkers.md
+      - Aligners: components/aligners.md
       - Validators: components/validators.md
-      - Exporters: components/exporters.md
+      - Formatters: components/formatters.md
       - Models: components/models.md
   - Examples:
       - CoNLL: examples/conll.md
