@@ -104,10 +104,14 @@ class HFTokenAlignmentValidator(TokenAlignmentValidator):
             decoded_expected = self.tokenizer.decode(
                 encoded_expected["input_ids"]
             ).strip()
+            decoded_expected = decoded_expected.replace("##", "").strip()
+            decoded_expected = decoded_expected.replace("Ġ", "").strip()
 
             # 2. Reconstruct the token ids from the original token list
             token_ids = [tokens[i].id for i in span.token_indices]
             decoded_actual = self.tokenizer.decode(token_ids).strip()
+            decoded_actual = decoded_actual.replace("##", "").strip()
+            decoded_actual = decoded_actual.replace("Ġ", "").strip()
 
             # 3. Compare
             if decoded_expected != decoded_actual:

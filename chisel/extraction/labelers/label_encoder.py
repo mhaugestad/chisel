@@ -64,7 +64,7 @@ class SimpleLabelEncoder:
             if normalized not in self.label_to_id:
                 if self.strict:
                     raise ValueError(
-                        f"Unknown label '{label}' (normalized as '{normalized}')."
+                        f"Unknown label '{label}' (normalized as '{normalized}'). To replace with 'O', set strict=False."
                     )
                 warnings.warn(
                     f"Unknown label '{label}' (normalized as '{normalized}'). "
