@@ -53,6 +53,30 @@ class DefaultParseValidator(ParseValidator):
                     )
 
 
+class LabelSchemaValidator(ParseValidator):
+    """
+    Validates that all entity spans conform to a predefined label schema.
+    """
+
+    def __init__(
+        self, allowed_labels: set[str], on_error: Literal["warn", "raise"] = "warn"
+    ):
+        self.allowed_labels = allowed_labels
+        self.on_error = on_error
+
+    def validate(self, text: str, entities: list[EntitySpan]) -> None:
+        for span in entities:
+            if span.label not in self.allowed_labels:
+                if self.on_error == "warn":
+                    print(
+                        f"Warning: Entity label '{span.label}' not in allowed labels {self.allowed_labels}."
+                    )
+                else:
+                    raise ValueError(
+                        f"Entity label '{span.label}' not in allowed labels {self.allowed_labels}."
+                    )
+
+
 class HFTokenAlignmentValidator(TokenAlignmentValidator):
     """
     Validates that the tokens within each TokenEntitySpan, when decoded using
