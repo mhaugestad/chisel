@@ -18,14 +18,14 @@ def make_tokens(text: str, tokenizer_name: str = "bert-base-uncased") -> List[To
 
 def test_validators():
     sample_text = "Barack Obama was the president of the United States."
-    entity_spans = [EntitySpan(text="Barack Obama", start=0, end=12, label="PER")]
-    token_entity_spans = [TokenEntitySpan(entity=entity_spans[0], token_indices=[0, 1])]
+    entity_span = EntitySpan(text="Barack Obama", start=0, end=12, label="PER")
+    token_entity_spans = TokenEntitySpan(entity=entity_span, token_indices=[0, 1])
     tokens = make_tokens(sample_text)
     tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
     labels = ["O", "B-PER", "L-PER"] + ["O"] * (len(tokens) - 3)
 
     # Run all validators
-    DefaultParseValidator().validate(sample_text, entity_spans)
+    DefaultParseValidator().validate(sample_text, entity_span)
     HFTokenAlignmentValidator(tokenizer).validate(tokens, token_entity_spans)
 
 
@@ -35,17 +35,17 @@ def test_label_schema_validator(capsys, on_error):
     validator = LabelSchemaValidator(allowed_labels, on_error=on_error)
 
     # Valid case
-    entity_spans = [EntitySpan(text="Barack Obama", start=0, end=12, label="PER")]
+    entity_spans = EntitySpan(text="Barack Obama", start=0, end=12, label="PER")
     validator.validate("Barack Obama was the president.", entity_spans)
 
     # Invalid case
     if on_error == "raise":
-        entity_spans_invalid = [EntitySpan(text="Unknown Entity", start=0, end=15, label="UNKNOWN")]
+        entity_spans_invalid = EntitySpan(text="Unknown Entity", start=0, end=15, label="UNKNOWN")
         with pytest.raises(ValueError):
             validator.validate("Unknown Entity is not allowed.", entity_spans_invalid)
 
     elif on_error == "warn":
-        entity_spans_invalid = [EntitySpan(text="Unknown Entity", start=0, end=15, label="UNKNOWN")]
+        entity_spans_invalid = EntitySpan(text="Unknown Entity", start=0, end=15, label="UNKNOWN")
         validator.validate("Unknown Entity is not allowed.", entity_spans_invalid)
         captured = capsys.readouterr()
         assert  "Warning: Entity label 'UNKNOWN' not in" in captured.out

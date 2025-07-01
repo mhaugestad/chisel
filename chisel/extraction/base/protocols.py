@@ -118,7 +118,7 @@ class Labeler(Protocol):
 @runtime_checkable
 class ParseValidator(Protocol):
     """
-    A protocol for validating parsed entity spans before tokenization.
+    A protocol for validating a single parsed entity span before tokenization.
 
     Responsibilities may include:
     - Ensuring the `text` in each `EntitySpan` exists verbatim in the input `text`.
@@ -132,7 +132,7 @@ class ParseValidator(Protocol):
 
     on_error: Literal["warn", "raise"]
 
-    def validate(self, text: str, entities: List[EntitySpan]) -> None: ...
+    def validate(self, text: str, entity: EntitySpan) -> None: ...
 
 
 @runtime_checkable
@@ -151,7 +151,7 @@ class TokenAlignmentValidator(Protocol):
     on_error: Literal["warn", "raise"]
 
     def validate(
-        self, tokens: List[Token], token_entity_spans: List[TokenEntitySpan]
+        self, tokens: List[Token], token_entity_span: TokenEntitySpan
     ) -> None: ...
 
 
