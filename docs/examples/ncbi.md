@@ -83,8 +83,8 @@ label_encoder = SimpleLabelEncoder(label_to_id={
     'B-DiseaseClass': 7,
     'I-DiseaseClass': 8,
 })
-parse_validators = [DefaultParseValidator()]
-label_validators = [HFTokenAlignmentValidator(tokenizer=tokenizer.tokenizer)]
+parse_validators = [DefaultParseValidator(on_error="raise")]
+label_validators = [HFTokenAlignmentValidator(tokenizer=tokenizer.tokenizer, on_error="raise")]
 formatter = TorchDatasetFormatter()
 ```
 
@@ -92,11 +92,19 @@ formatter = TorchDatasetFormatter()
 ```
 processed_data = []
 
+# 🔁 Pipeline loop
 for example in annotations:
     text, entities = parser.parse(example["text"])
-
-    for validator in parse_validators:
-        validator.validate(text, entities)
+    
+    # 🧪 Per-span validation — skip bad spans
+    valid_spans = []
+    for span in entities:
+        try:
+            for validator in parse_validators:
+                validator.validate(text, span)
+            valid_spans.append(span)
+        except ValueError:
+            continue 
 
     tokens = tokenizer.tokenize(text)
     token_entity_spans = aligner.align(entities, tokens)
@@ -104,23 +112,32 @@ for example in annotations:
     token_chunks, entity_chunks = chunker.chunk(tokens, token_entity_spans)
 
     for chunk_id, (toks, ents) in enumerate(zip(token_chunks, entity_chunks)):
+
         labels = labeler.label(toks, ents)
         encoded_labels = label_encoder.encode(labels)
 
-        for validator in label_validators:
-            validator.validate(toks, ents, labels)
+        # 🧪 Per-span validation — skip bad spans
+        valid_token_spans = []
+        for span in token_entity_spans:
+            try:
+                for validator in label_validators:
+                    validator.validate(tokens, span)
+                valid_token_spans.append(span)
+            except ValueError as e:
+                print(f"Validation error: {e}")  # Log the error for debugging
+                continue  # Optionally log or collect stats on dropped spans
 
         record = ChiselRecord(
-            id=example["id"],
-            chunk_id=chunk_id,
-            text=tokenizer.tokenizer.decode([token.id for token in toks]),
-            tokens=toks,
-            input_ids=[token.id for token in toks],
-            attention_mask=[1] * len(toks),
-            entities=[tes.entity for tes in ents],
-            bio_labels=labels,
-            labels=encoded_labels
-        )
+                id=example["id"],
+                chunk_id=chunk_id,
+                text=tokenizer.tokenizer.decode([token.id for token in toks]),
+                tokens=toks,
+                input_ids=[token.id for token in toks],
+                attention_mask=[1] * len(toks),
+                entities=[tes.entity for tes in valid_token_spans],
+                bio_labels=labels,
+                labels=encoded_labels
+            )
         processed_data.append(record)
 
 data = formatter.format(processed_data)

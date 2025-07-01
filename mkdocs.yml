@@ -1,5 +1,5 @@
 site_name: Chisel
-repo_url: https://github.com/your-org/chisel
+repo_url: https://github.com/mhaugestad/chisel
 theme:
   name: material
   features:

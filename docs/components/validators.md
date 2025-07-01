@@ -1,5 +1,12 @@
 # ✅ Validators
-Validators in Chisel help catch inconsistencies early in the preprocessing pipeline. They are divided into two categories:
+Validators in Chisel help catch inconsistencies early in the preprocessing pipeline. They provide a flexible validation system to help catch annotation errors early — before they silently degrade your model performance.
+
+## Why Validators?
+When training token classification models, small inconsistencies in span alignment or label sequences can lead to misleading results, unstable training, or even complete failures downstream. Validators give you an explicit place to catch and handle these inconsistencies.
+
+For example, if a span is misaligned with token boundaries or if a label sequence does not match the expected entity structure, a validator can flag it — and depending on configuration, either raise an error or continue gracefully.
+
+They are divided into two categories:
 
 ## 🔍 Parse Validators
 Parse validators run before tokenization and ensure that the entity spans extracted by the parser are accurate with respect to the original text.
@@ -10,7 +17,7 @@ Parse validators run before tokenization and ensure that the entity spans extrac
 class ParseValidator(Protocol):
     on_error: Literal["warn", "raise"]
 
-    def validate(self, text: str, entities: List[EntitySpan]) -> None: ...
+    def validate(self, text: str, span: EntitySpan) -> None: ...
 ```
 
 ### 🛠️ Implementation: `DefaultParseValidator`
@@ -36,7 +43,7 @@ class DefaultParseValidator(ParseValidator):
 ### 💡 Usage
 ```
 validator = DefaultParseValidator(on_error="raise")
-validator.validate(text, entities)
+validator.validate(text, span)
 ```
 
 ## 🧷 Token Alignment Validators
@@ -49,7 +56,7 @@ class TokenAlignmentValidator(Protocol):
     on_error: Literal["warn", "raise"]
 
     def validate(
-        self, tokens: List[Token], token_entity_spans: List[TokenEntitySpan]
+        self, tokens: List[Token], span: TokenEntitySpan
     ) -> None: ...
 ```
 
@@ -77,7 +84,7 @@ from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
 
 validator = HFTokenAlignmentValidator(tokenizer=tokenizer, on_error="warn")
-validator.validate(tokens, token_entity_spans)
+validator.validate(tokens, span)
 ```
 ## ⚠️ on_error Behavior
 All validators accept an on_error argument:
@@ -88,6 +95,17 @@ All validators accept an on_error argument:
 | `"warn"`  | Logs a warning and continues execution.        |
 
 This allows you to use strict checks during development, but run more flexibly during large-scale preprocessing.
+
+## Skipping Only the Broken Spans
+```
+valid_spans = []
+for span in token_entity_spans:
+    try:
+        validator.validate(tokens, span)
+        valid_spans.append(span)
+    except ValueError:
+        continue  # Skip just this one
+```
 
 ## 🛠️ Implementing Custom Validators
 You can easily extend Chisel by writing your own validator classes that follow the appropriate protocol.
